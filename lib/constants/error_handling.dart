@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nukdi2/constants/utils.dart';
-
 
 void httpErrorHandle({
   required http.Response response,
@@ -12,6 +10,7 @@ void httpErrorHandle({
 }) {
   switch (response.statusCode) {
     case 200:
+    case 201: // ✅ Handle "Created" success as well
       onSuccess();
       break;
     case 400:
@@ -21,7 +20,6 @@ void httpErrorHandle({
       showSnackBar(context, jsonDecode(response.body)['error']);
       break;
     default:
-      showSnackBar(context, response.body); //or 'Something went wrong'
-      
+      showSnackBar(context, response.body); // Optional: customize message
   }
 }

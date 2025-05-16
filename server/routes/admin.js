@@ -1,24 +1,27 @@
 const express = require('express');
 const adminRouter = express.Router();
 const admin = require('../middlewares/admin');
+const Product = require('../models/product'); // ✅ import model
 
-//add product
+// Add product
 adminRouter.post('/admin/add-product', admin, async (req, res) => {
   try {
-    //they should match to product
-    const { name, descriptions, images, quantity, price, category } = req.body;
-    let product = new Product({
+    const { name, description, images, quantity, price, category } = req.body;
+
+    const product = new Product({
       name,
-      descriptions,
+      description,
       images,
       quantity,
       price,
-      category
+      category,
     });
-    product = await product.save();
-    res.json(product);
-  }
-  catch(err) {
+
+    const savedProduct = await product.save();
+    res.status(201).json(savedProduct);
+  } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 });
+
+module.exports = adminRouter;

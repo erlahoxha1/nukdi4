@@ -7,6 +7,7 @@ import 'package:nukdi2/common/widgets/custom_button.dart';
 import 'package:nukdi2/constants/global_variables.dart';
 import 'package:nukdi2/common/widgets/custom_textfield.dart';
 import 'package:nukdi2/constants/utils.dart';
+import 'package:nukdi2/features/admin/services/admin_services.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const String routeName = '/add-product';
@@ -21,9 +22,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController quanityController = TextEditingController();
+  final AdminServices adminServices = AdminServices();
+
 
   String category = 'cat1';
   List<File> images = [];
+
+  final _addProductFormKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -36,6 +41,22 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   // ktu kategorit e gjerave qe shesim kujdes te global
   List<String> productCategories = ['cat1', 'cat2', 'cat3', 'cat4'];
+
+  void sellProduct() {
+
+    if (_addProductFormKey.currentState!.validate() || images.isNotEmpty) {
+      adminServices.sellProduct(
+        context: context,
+        name: productNameController.text,
+        description: descriptionController.text,
+        price: double.parse(priceController.text),
+        quantity: int.parse(quanityController.text),
+        category: category,
+        images: images,
+      );
+    }
+
+  }
   void selectImages() async {
     var res = await pickImages();
     setState(() {
@@ -62,6 +83,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       ),
       body: SingleChildScrollView(
         child: Form(
+          key: _addProductFormKey,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Column(
@@ -154,7 +176,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                CustomButton(text: 'Sell', onTap: () {}),
+                CustomButton(text: 'Sell', onTap: sellProduct),
               ],
             ),
           ),

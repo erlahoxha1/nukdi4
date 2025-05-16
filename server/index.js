@@ -4,6 +4,7 @@ const mongoose = require("mongoose");   // faster
 //import from files
 
 const authRouter = require('./routes/auth');
+const adminRouter = require("./routes/admin");
 //init
 const PORT = 3000;
 const app = express();
@@ -12,6 +13,7 @@ const DB = "mongodb+srv://erla:test123@cluster0.jy4zpgd.mongodb.net/?retryWrites
 //middleware
 app.use(express.json());
 app.use(authRouter);
+app.use(adminRouter);
 
 //connections
 mongoose.connect(DB).then(() => {

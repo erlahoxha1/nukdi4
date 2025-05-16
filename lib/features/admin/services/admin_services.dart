@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:cloudinary_public/cloudinary_public.dart';
 import 'package:flutter/material.dart';
 import 'package:nukdi2/constants/error_handling.dart';
+import 'package:nukdi2/constants/global_variables.dart';
 import 'package:nukdi2/constants/utils.dart';
 import 'package:nukdi2/models/product.dart';
 import 'package:http/http.dart' as http;
