@@ -1,6 +1,12 @@
+import 'dart:io';
+
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:nukdi2/common/widgets/custom_button.dart';
 import 'package:nukdi2/constants/global_variables.dart';
+import 'package:nukdi2/common/widgets/custom_textfield.dart';
+import 'package:nukdi2/constants/utils.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const String routeName = '/add-product';
@@ -11,6 +17,32 @@ class AddProductScreen extends StatefulWidget {
 }
 
 class _AddProductScreenState extends State<AddProductScreen> {
+  final TextEditingController productNameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController priceController = TextEditingController();
+  final TextEditingController quanityController = TextEditingController();
+
+  String category = 'cat1';
+  List<File> images = [];
+
+  @override
+  void dispose() {
+    super.dispose();
+    productNameController.dispose();
+    descriptionController.dispose();
+    priceController.dispose();
+    quanityController.dispose();
+  }
+
+  // ktu kategorit e gjerave qe shesim kujdes te global
+  List<String> productCategories = ['cat1', 'cat2', 'cat3', 'cat4'];
+  void selectImages() async {
+    var res = await pickImages();
+    setState(() {
+      images = res;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,43 +62,101 @@ class _AddProductScreenState extends State<AddProductScreen> {
       ),
       body: SingleChildScrollView(
         child: Form(
-          child: Column(
-            children: [
-              const SizedBox(height: 20),
-              GestureDetector(
-                onTap: () {
-                  // TODO: Implement image selection
-                },
-                child: DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(10),
-                  dashPattern: const [10, 4],
-                  strokeCap: StrokeCap.round,
-                  color: Colors.grey,
-                  child: Container(
-                    width: double.infinity,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.folder_open, size: 40),
-                        const SizedBox(height: 15),
-                        Text(
-                          'Select Product Images',
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.grey.shade400,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+                images.isNotEmpty
+                    ? CarouselSlider(
+                      items:
+                          images.map((i) {
+                            return Builder(
+                              builder:
+                                  (BuildContext context) => Image.file(
+                                    i,
+                                    fit: BoxFit.cover,
+                                    height: 200,
+                                  ),
+                            );
+                          }).toList(),
+                      options: CarouselOptions(
+                        viewportFraction: 1,
+                        height: 200,
+                      ),
+                    )
+                    : GestureDetector(
+                      onTap: selectImages,
+                      child: DottedBorder(
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(10),
+                        dashPattern: const [10, 4],
+                        strokeCap: StrokeCap.round,
+                        child: Container(
+                          width: double.infinity,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.folder_open, size: 40),
+                              const SizedBox(height: 15),
+                              Text(
+                                'Select Product Images',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.grey[400],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
+                const SizedBox(height: 20),
+                CustomTextfield(
+                  controller: productNameController,
+                  hintText: 'Product Name',
+                ),
+                const SizedBox(height: 10),
+                CustomTextfield(
+                  controller: descriptionController,
+                  hintText: 'Description ',
+                  maxLines: 5,
+                ),
+                const SizedBox(height: 10),
+                CustomTextfield(controller: priceController, hintText: 'Price'),
+                const SizedBox(height: 10),
+                CustomTextfield(
+                  controller: quanityController,
+                  hintText: 'Quantity ',
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: DropdownButton(
+                    value: category,
+                    icon: const Icon(Icons.keyboard_arrow_down),
+                    items:
+                        productCategories.map((String items) {
+                          return DropdownMenuItem(
+                            value: items,
+                            child: Text(items),
+                          );
+                        }).toList(),
+                    onChanged: (String? newVal) {
+                      setState(() {
+                        category = newVal!;
+                      });
+                    },
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 10),
+                CustomButton(text: 'Sell', onTap: () {}),
+              ],
+            ),
           ),
         ),
       ),

@@ -12,7 +12,7 @@ class GlobalVariables {
     stops: [0.5, 1.0],
   );
 
-  static const secondaryColor = Color.fromRGBO(255, 153, 0, 1);
+  static const secondaryColor = Color.fromRGBO(9, 84, 105, 1);
   static const backgroundColor = Colors.white;
   static const Color greyBackgroundCOlor = Color(0xffebecee);
   static var selectedNavBarColor = Colors.cyan[800]!;
@@ -26,22 +26,9 @@ class GlobalVariables {
     'https://images-na.ssl-images-amazon.com/images/G/31/img21/shoes/September/SSW/pc-header._CB641971330_.jpg',
   ];
   static const List<Map<String, String>> categoryImages = [
-
-    {
-      'title': 'cat1',
-      'image': 'assets/images/topc1.png',
-    },
-    {
-      'title': 'cat2',
-      'image': 'assets/images/topc2.png',
-    },
-    {
-      'title': 'cat3',
-      'image': 'assets/images/topc3.png',
-    },
-    {
-      'title': 'cat4',
-      'image': 'assets/images/topc4.png',
-    },
+    {'title': 'cat1', 'image': 'assets/images/topc1.png'},
+    {'title': 'cat2', 'image': 'assets/images/topc2.png'},
+    {'title': 'cat3', 'image': 'assets/images/topc3.png'},
+    {'title': 'cat4', 'image': 'assets/images/topc4.png'},
   ];
 }

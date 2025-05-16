@@ -2,7 +2,6 @@ import 'package:nukdi2/features/admin/screens/admin_screen.dart';
 import 'package:nukdi2/features/home/screens/home_screens.dart';
 import 'package:provider/provider.dart';
 import 'package:nukdi2/provider/user_provider.dart'; // ✅ This fixes your error
-
 import 'package:flutter/material.dart';
 import 'package:nukdi2/constants/global_variables.dart';
 import 'package:nukdi2/router.dart';
