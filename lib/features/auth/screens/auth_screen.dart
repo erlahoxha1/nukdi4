@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nukdi2/common/widgets/custom_button.dart';
 import 'package:nukdi2/common/widgets/custom_textfield.dart';
 import 'package:nukdi2/constants/global_variables.dart'; // update path as needed
+import 'package:nukdi2/features/auth/services/auth_service.dart';
+
 
 enum Auth { signin, signup }
 
@@ -17,9 +19,14 @@ class _AuthScreenState extends State<AuthScreen> {
   Auth _auth = Auth.signup;
   final _signUpFormKey = GlobalKey<FormState>();
   final _signInFormKey = GlobalKey<FormState>();
+
+  final AuthService authService = AuthService();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+
+  
+
   @override
   void dispose() {
     super.dispose();
@@ -27,7 +34,23 @@ class _AuthScreenState extends State<AuthScreen> {
     _passwordController.dispose();
     _nameController.dispose();
   }
+  void signUpUser() {
+    authService.signUpUser(
+      context: context,
+      name: _nameController.text,
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+  }
 
+
+  void signInUser() {
+    authService.signInUser(
+      context: context,
+      email: _emailController.text,
+      password: _passwordController.text,
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +59,7 @@ class _AuthScreenState extends State<AuthScreen> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
                 'Welcome',
@@ -84,12 +108,21 @@ class _AuthScreenState extends State<AuthScreen> {
                           hintText: 'Password',
                         ),
                         const SizedBox(height: 10),
-                        CustomButton(text: 'Sign up', onTap: () {}),
+                        CustomButton(text: 'Sign up', onTap: () {
+                          if (_signUpFormKey.currentState!.validate()) {
+                            signUpUser();
+                          }
+
+                        }),
                       ],
                     ),
                   ),
                 ),
               ListTile(
+                tileColor:
+                    _auth == Auth.signin
+                        ? GlobalVariables.backgroundColor
+                        : GlobalVariables.greyBackgroundCOlor,
                 title: const Text(
                   'Sign in',
                   style: TextStyle(fontWeight: FontWeight.bold),
@@ -105,6 +138,33 @@ class _AuthScreenState extends State<AuthScreen> {
                   },
                 ),
               ),
+              if (_auth == Auth.signin)
+                Container(
+                  padding: const EdgeInsets.all(8.0),
+                  color: GlobalVariables.backgroundColor,
+                  child: Form(
+                    key: _signInFormKey,
+                    child: Column(
+                      children: [
+                        CustomTextfield(
+                          controller: _emailController,
+                          hintText: 'Email',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextfield(
+                          controller: _passwordController,
+                          hintText: 'Password',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomButton(text: 'Sign in', onTap: () {
+                          if (_signInFormKey.currentState!.validate()) {
+                            signInUser();
+                          }
+                        }),
+                      ],
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
