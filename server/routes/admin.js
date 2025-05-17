@@ -24,4 +24,32 @@ adminRouter.post('/admin/add-product', admin, async (req, res) => {
   }
 });
 
+// Get all products
+adminRouter.get('/admin/get-products', admin, async (req, res) => {
+  try {
+    const products = await Product.find({});
+    res.json(products);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+adminRouter.post('/admin/delete-product', admin, async (req, res) => {
+  const { id } = req.body;
+  console.log("🟥 Incoming delete request ID:", id);
+
+  if (!id) {
+    return res.status(400).json({ error: 'No ID provided' });
+  }
+
+  const product = await Product.findByIdAndDelete(id);
+  if (!product) {
+    return res.status(404).json({ error: 'Product not found' });
+  }
+
+  res.json({ message: 'Deleted', deleted: product });
+});
+
+
+
 module.exports = adminRouter;

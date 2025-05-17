@@ -27,7 +27,7 @@ class Product {
       'price': price,
       'quantity': quantity,
       'images': images,
-      'id': id,
+      '_id': id,
     };
   }
 
@@ -35,7 +35,7 @@ class Product {
 
   factory Product.fromMap(Map<String, dynamic> map) {
     return Product(
-      id: map['id'],
+      id: map['_id']?.toString(), // ✅ Convert ObjectId to String
       name: map['name'] ?? '',
       description: map['description'] ?? '',
       category: map['category'] ?? '',
