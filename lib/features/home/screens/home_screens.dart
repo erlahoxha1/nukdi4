@@ -16,6 +16,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  void navigateToSearchScreen(String query) {
+    Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,11 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(7),
                     elevation: 1,
                     child: TextFormField(
+                      onFieldSubmitted: navigateToSearchScreen,
                       decoration: InputDecoration(
                         prefixIcon: InkWell(
                           onTap: () {},
                           child: const Padding(
-                            padding: EdgeInsets.only(left: 6),
+                            padding: EdgeInsets.only(
+                              left: 6,
+                            ),
                             child: Icon(
                               Icons.search,
                               color: Colors.black,
@@ -54,21 +61,24 @@ class _HomeScreenState extends State<HomeScreen> {
                         fillColor: Colors.white,
                         contentPadding: const EdgeInsets.only(top: 10),
                         border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(7),
+                          ),
                           borderSide: BorderSide.none,
                         ),
                         enabledBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(7),
+                          ),
                           borderSide: BorderSide(
                             color: Colors.black38,
                             width: 1,
                           ),
                         ),
-                        hintText: 'Search AutoSpark ',
+                        hintText: 'Search Amazon.in',
                         hintStyle: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 17,
                         ),
                       ),
                     ),
@@ -79,11 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.transparent,
                 height: 42,
                 margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Icon(
-                  Icons.camera_alt_outlined,
-                  color: Colors.black,
-                  size: 25,
-                ),
+                child: const Icon(Icons.mic, color: Colors.black, size: 25),
               ),
             ],
           ),
@@ -93,9 +99,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           children: const [
             AddressBox(),
-            SizedBox(height: 10), // po deshem shtojme carauselimage
+            SizedBox(height: 10),
             TopCategories(),
-            SizedBox(height: 10), // po deshem shtojme carauselimage
+            SizedBox(height: 10),
             CarouselImage(),
             DealOfDay(),
           ],
