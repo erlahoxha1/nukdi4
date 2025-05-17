@@ -2,17 +2,18 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:nukdi4/models/user.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:nukdi2/constants/error_handling.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/constants/utils.dart';
-import 'package:nukdi2/models/user.dart';
-import 'package:nukdi2/provider/user_provider.dart';
+import 'package:nukdi4/constants/error_handling.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/constants/utils.dart';
+import 'package:nukdi4/provider/user_provider.dart';
 
-import 'package:nukdi2/features/auth/screens/auth_screen.dart';
-import 'package:nukdi2/features/admin/screens/admin_screen.dart';
-import 'package:nukdi2/common/widgets/bottom_bar.dart';
+import 'package:nukdi4/features/auth/screens/auth_screen.dart';
+import 'package:nukdi4/features/admin/screens/admin_screen.dart';
+import 'package:nukdi4/common/widgets/bottom_bar.dart';
 
 class AuthService {
   // Sign Up
@@ -31,14 +32,13 @@ class AuthService {
         address: '',
         type: 'user',
         token: '',
+        cart: [], // ✅ This line fixes the problem
       );
 
       http.Response res = await http.post(
         Uri.parse('$uri/api/signup'),
         body: user.toJson(),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
       );
 
       httpErrorHandle(
@@ -66,9 +66,7 @@ class AuthService {
       http.Response res = await http.post(
         Uri.parse('$uri/api/signin'),
         body: jsonEncode({'email': email, 'password': password}),
-        headers: {
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
       );
 
       httpErrorHandle(
@@ -79,8 +77,7 @@ class AuthService {
           final decodedUser = jsonDecode(res.body);
 
           // Save user in provider
-          Provider.of<UserProvider>(context, listen: false)
-              .setUser(res.body);
+          Provider.of<UserProvider>(context, listen: false).setUser(res.body);
 
           // Save token
           await prefs.setString('x-auth-token', decodedUser['token']);
@@ -139,8 +136,7 @@ class AuthService {
         );
 
         // Set user in provider
-        Provider.of<UserProvider>(context, listen: false)
-            .setUser(userRes.body);
+        Provider.of<UserProvider>(context, listen: false).setUser(userRes.body);
       }
     } catch (e) {
       showSnackBar(context, 'Something went wrong: ${e.toString()}');

@@ -1,11 +1,11 @@
-import 'package:nukdi2/constants/utils.dart';
-import 'package:nukdi2/features/address/services/address_services.dart';
+import 'package:nukdi4/constants/utils.dart';
+import 'package:nukdi4/features/address/services/address_services.dart';
 import 'package:flutter/material.dart';
 import 'package:pay/pay.dart';
 import 'package:provider/provider.dart';
-import 'package:nukdi2/common/widgets/custom_textfield.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/providers/user_provider.dart';
+import 'package:nukdi4/common/widgets/custom_textfield.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/provider/user_provider.dart';
 
 class AddressScreen extends StatefulWidget {
   static const String routeName = '/address';
@@ -172,7 +172,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 onPaymentResult: onGooglePayResult,
                 paymentItems: paymentItems,
                 height: 50,
-                style: GooglePayButtonStyle.black,
+                //style: GooglePayButtonStyle.black,
                 type: GooglePayButtonType.buy,
                 margin: const EdgeInsets.only(top: 15),
                 loadingIndicator: const Center(

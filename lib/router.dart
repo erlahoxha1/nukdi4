@@ -1,14 +1,14 @@
-import 'package:nukdi2/common/widgets/bottom_bar.dart';
-import 'package:nukdi2/features/address/screens/address_screen.dart';
-import 'package:nukdi2/features/admin/screens/add_product_screen.dart';
-import 'package:nukdi2/features/auth/screens/auth_screen.dart';
-import 'package:nukdi2/features/home/screens/category_deals_screen.dart';
-import 'package:nukdi2/features/home/screens/home_screen.dart';
-import 'package:nukdi2/features/order_details/screens/order_details.dart';
-import 'package:nukdi2/features/product_details/screens/product_details_screen.dart';
-import 'package:nukdi2/features/search/screens/search_screen.dart';
-import 'package:nukdi2/models/order.dart';
-import 'package:nukdi2/models/product.dart';
+import 'package:nukdi4/common/widgets/bottom_bar.dart';
+import 'package:nukdi4/features/address/screens/address_screen.dart';
+import 'package:nukdi4/features/admin/screens/add_product_screen.dart';
+import 'package:nukdi4/features/auth/screens/auth_screen.dart';
+import 'package:nukdi4/features/home/screens/category_deals_screen.dart';
+import 'package:nukdi4/features/home/screens/home_screen.dart';
+import 'package:nukdi4/features/order_details/screens/order_details.dart';
+import 'package:nukdi4/features/product_details/screens/product_details_screen.dart';
+import 'package:nukdi4/features/search/screens/search_screen.dart';
+import 'package:nukdi4/models/order.dart';
+import 'package:nukdi4/models/product.dart';
 import 'package:flutter/material.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {

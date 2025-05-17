@@ -1,7 +1,7 @@
-import 'package:nukdi2/features/cart/services/cart_services.dart';
-import 'package:nukdi2/features/product_details/services/product_details_services.dart';
-import 'package:nukdi2/models/product.dart';
-import 'package:nukdi2/providers/user_provider.dart';
+import 'package:nukdi4/features/cart/services/cart_services.dart';
+import 'package:nukdi4/features/product_details/services/product_details_services.dart';
+import 'package:nukdi4/models/product.dart';
+import 'package:nukdi4/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

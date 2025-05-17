@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nukdi2/features/account/widgets/account_button.dart';
+import 'package:nukdi4/features/account/widgets/account_button.dart';
 
 class TopButtons extends StatefulWidget {
   const TopButtons({Key? key}) : super(key: key);

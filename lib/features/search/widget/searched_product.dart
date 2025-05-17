@@ -1,6 +1,6 @@
 
-import 'package:nukdi2/common/widgets/stars.dart';
-import 'package:nukdi2/models/product.dart';
+import 'package:nukdi4/common/widgets/stars.dart';
+import 'package:nukdi4/models/product.dart';
 import 'package:flutter/material.dart';
 
 class SearchedProduct extends StatelessWidget {

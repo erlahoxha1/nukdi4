@@ -1,13 +1,13 @@
-import 'package:nukdi2/common/widgets/custom_button.dart';
-import 'package:nukdi2/common/widgets/stars.dart';
-import 'package:nukdi2/features/product_details/services/product_details_services.dart';
-import 'package:nukdi2/providers/user_provider.dart';
+import 'package:nukdi4/common/widgets/custom_button.dart';
+import 'package:nukdi4/common/widgets/stars.dart';
+import 'package:nukdi4/features/product_details/services/product_details_services.dart';
+import 'package:nukdi4/provider/user_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/features/search/screens/search_screen.dart';
-import 'package:nukdi2/models/product.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/search/screens/search_screen.dart';
+import 'package:nukdi4/models/product.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 

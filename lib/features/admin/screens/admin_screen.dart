@@ -1,7 +1,7 @@
 import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/features/admin/screens/posts_screen.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/admin/screens/posts_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   static const String routeName = '/admin-screen';

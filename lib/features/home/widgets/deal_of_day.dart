@@ -1,7 +1,7 @@
-import 'package:nukdi2/common/widgets/loader.dart';
-import 'package:nukdi2/features/home/services/home_services.dart';
-import 'package:nukdi2/features/product_details/screens/product_details_screen.dart';
-import 'package:nukdi2/models/product.dart';
+import 'package:nukdi4/common/widgets/loader.dart';
+import 'package:nukdi4/features/home/services/home_services.dart';
+import 'package:nukdi4/features/product_details/screens/product_details_screen.dart';
+import 'package:nukdi4/models/product.dart';
 import 'package:flutter/material.dart';
 
 class DealOfDay extends StatefulWidget {

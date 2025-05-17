@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:nukdi2/common/widgets/custom_button.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/common/widgets/custom_textfield.dart';
-import 'package:nukdi2/constants/utils.dart';
-import 'package:nukdi2/features/admin/services/admin_services.dart';
+import 'package:nukdi4/common/widgets/custom_button.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/common/widgets/custom_textfield.dart';
+import 'package:nukdi4/constants/utils.dart';
+import 'package:nukdi4/features/admin/services/admin_services.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const String routeName = '/add-product';
@@ -41,7 +41,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   // ktu kategorit e gjerave qe shesim kujdes te global
   List<String> productCategories = ['cat1', 'cat2', 'cat3', 'cat4'];
-
+/*
   void sellProduct() {
 
     if (_addProductFormKey.currentState!.validate() || images.isNotEmpty) {
@@ -57,6 +57,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
     }
 
   }
+*/
   void selectImages() async {
     var res = await pickImages();
     setState(() {
@@ -138,20 +139,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       ),
                     ),
                 const SizedBox(height: 20),
-                CustomTextfield(
+                CustomTextField(
                   controller: productNameController,
                   hintText: 'Product Name',
                 ),
                 const SizedBox(height: 10),
-                CustomTextfield(
+                CustomTextField(
                   controller: descriptionController,
                   hintText: 'Description ',
                   maxLines: 5,
                 ),
                 const SizedBox(height: 10),
-                CustomTextfield(controller: priceController, hintText: 'Price'),
+                CustomTextField(controller: priceController, hintText: 'Price'),
                 const SizedBox(height: 10),
-                CustomTextfield(
+                CustomTextField(
                   controller: quanityController,
                   hintText: 'Quantity ',
                 ),
@@ -176,7 +177,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                CustomButton(text: 'Sell', onTap: sellProduct),
+                CustomButton(text: 'Sell', onTap: (){}),
               ],
             ),
           ),

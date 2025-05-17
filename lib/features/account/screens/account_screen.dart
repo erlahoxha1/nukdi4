@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nukdi2/common/widgets/orders.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/features/account/widgets/below_app_bar.dart';
-import 'package:nukdi2/features/account/widgets/top_bottoms.dart';
+import 'package:nukdi4/common/widgets/orders.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/account/widgets/below_app_bar.dart';
+import 'package:nukdi4/features/account/widgets/top_bottoms.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);

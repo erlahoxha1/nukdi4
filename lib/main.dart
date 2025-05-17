@@ -1,14 +1,14 @@
-import 'package:nukdi2/features/admin/screens/admin_screen.dart';
-import 'package:nukdi2/features/home/screens/home_screens.dart';
+import 'package:nukdi4/features/admin/screens/admin_screen.dart';
+import 'package:nukdi4/features/home/screens/home_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:nukdi2/provider/user_provider.dart'; // ✅ This fixes your error
+import 'package:nukdi4/provider/user_provider.dart'; // ✅ This fixes your error
 import 'package:flutter/material.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/router.dart';
-import 'package:nukdi2/features/auth/screens/auth_screen.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/router.dart';
+import 'package:nukdi4/features/auth/screens/auth_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:nukdi2/features/auth/services/auth_service.dart';
-import 'package:nukdi2/common/widgets/bottom_bar.dart';
+import 'package:nukdi4/features/auth/services/auth_service.dart';
+import 'package:nukdi4/common/widgets/bottom_bar.dart';
 
 void main() {
   runApp(

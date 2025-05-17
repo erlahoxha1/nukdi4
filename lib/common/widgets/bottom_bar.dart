@@ -1,9 +1,9 @@
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/features/account/screens/account_screen.dart';
-import 'package:nukdi2/features/cart/screens/cart_screen.dart';
-import 'package:nukdi2/features/home/screens/home_screen.dart';
-import 'package:nukdi2/providers/user_provider.dart';
-import 'package:badges/badges.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/account/screens/account_screen.dart';
+import 'package:nukdi4/features/cart/screens/cart_screen.dart';
+import 'package:nukdi4/features/home/screens/home_screen.dart';
+import 'package:nukdi4/provider/user_provider.dart';
+import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,16 +53,15 @@ class _BottomBarState extends State<BottomBar> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: _page == 0
-                        ? GlobalVariables.selectedNavBarColor
-                        : GlobalVariables.backgroundColor,
+                    color:
+                        _page == 0
+                            ? GlobalVariables.selectedNavBarColor
+                            : GlobalVariables.backgroundColor,
                     width: bottomBarBorderWidth,
                   ),
                 ),
               ),
-              child: const Icon(
-                Icons.home_outlined,
-              ),
+              child: const Icon(Icons.home_outlined),
             ),
             label: '',
           ),
@@ -73,16 +72,15 @@ class _BottomBarState extends State<BottomBar> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: _page == 1
-                        ? GlobalVariables.selectedNavBarColor
-                        : GlobalVariables.backgroundColor,
+                    color:
+                        _page == 1
+                            ? GlobalVariables.selectedNavBarColor
+                            : GlobalVariables.backgroundColor,
                     width: bottomBarBorderWidth,
                   ),
                 ),
               ),
-              child: const Icon(
-                Icons.person_outline_outlined,
-              ),
+              child: const Icon(Icons.person_outline_outlined),
             ),
             label: '',
           ),
@@ -93,20 +91,21 @@ class _BottomBarState extends State<BottomBar> {
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: _page == 2
-                        ? GlobalVariables.selectedNavBarColor
-                        : GlobalVariables.backgroundColor,
+                    color:
+                        _page == 2
+                            ? GlobalVariables.selectedNavBarColor
+                            : GlobalVariables.backgroundColor,
                     width: bottomBarBorderWidth,
                   ),
                 ),
               ),
-              child: Badge(
-                elevation: 0,
+              child: badges.Badge(
                 badgeContent: Text(userCartLen.toString()),
-                badgeColor: Colors.white,
-                child: const Icon(
-                  Icons.shopping_cart_outlined,
+                badgeStyle: const badges.BadgeStyle(
+                  elevation: 0,
+                  badgeColor: Colors.white,
                 ),
+                child: const Icon(Icons.shopping_cart_outlined),
               ),
             ),
             label: '',

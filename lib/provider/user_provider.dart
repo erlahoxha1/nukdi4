@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:amazon_clone_tutorial/models/user.dart';
+import 'package:nukdi4/models/user.dart';
 import 'package:flutter/material.dart';
 
 

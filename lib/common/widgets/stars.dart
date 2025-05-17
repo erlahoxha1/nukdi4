@@ -1,4 +1,4 @@
-import 'package:nukdi2/constants/global_variables.dart';
+import 'package:nukdi4/constants/global_variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 

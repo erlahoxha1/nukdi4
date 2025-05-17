@@ -1,7 +1,7 @@
-import 'package:nukdi2/common/widgets/custom_button.dart';
-import 'package:nukdi2/common/widgets/custom_textfield.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/features/auth/services/auth_service.dart';
+import 'package:nukdi4/common/widgets/custom_button.dart';
+import 'package:nukdi4/common/widgets/custom_textfield.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
 enum Auth {

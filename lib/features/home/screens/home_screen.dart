@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/features/auth/widgets/address_box.dart';
-import 'package:nukdi2/features/auth/widgets/carausel_image.dart';
-import 'package:nukdi2/features/auth/widgets/deal_of_day.dart';
-import 'package:nukdi2/features/auth/widgets/top_categories.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/home/widgets/address_box.dart';
+import 'package:nukdi4/features/home/widgets/carausel_image.dart';
+import 'package:nukdi4/features/home/widgets/deal_of_day.dart';
+import 'package:nukdi4/features/home/widgets/top_categories.dart';
+import 'package:nukdi4/features/search/screens/search_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:nukdi2/provider/user_provider.dart';
+import 'package:nukdi4/provider/user_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';

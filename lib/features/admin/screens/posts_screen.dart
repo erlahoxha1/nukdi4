@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nukdi2/common/widgets/loader.dart';
-import 'package:nukdi2/common/widgets/single_product.dart';
-import 'package:nukdi2/features/admin/screens/add_product_screen.dart';
-import 'package:nukdi2/features/admin/services/admin_services.dart';
-import 'package:nukdi2/models/product.dart';
+import 'package:nukdi4/common/widgets/loader.dart';
+import 'package:nukdi4/common/widgets/single_product.dart';
+import 'package:nukdi4/features/admin/screens/add_product_screen.dart';
+import 'package:nukdi4/features/admin/services/admin_services.dart';
+import 'package:nukdi4/models/product.dart';
 
 class PostsScreen extends StatefulWidget {
   const PostsScreen({Key? key}) : super(key: key);

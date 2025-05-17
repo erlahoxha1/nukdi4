@@ -1,11 +1,11 @@
-import 'package:nukdi2/common/widgets/custom_button.dart';
-import 'package:nukdi2/constants/global_variables.dart';
-import 'package:nukdi2/features/address/screens/address_screen.dart';
-import 'package:nukdi2/features/cart/widgets/cart_product.dart';
-import 'package:nukdi2/features/cart/widgets/cart_subtotal.dart';
-import 'package:nukdi2/features/home/widgets/address_box.dart';
-import 'package:nukdi2/features/search/screens/search_screen.dart';
-import 'package:nukdi2/providers/user_provider.dart';
+import 'package:nukdi4/common/widgets/custom_button.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/address/screens/address_screen.dart';
+import 'package:nukdi4/features/cart/widgets/cart_product.dart';
+import 'package:nukdi4/features/cart/widgets/cart_subtotal.dart';
+import 'package:nukdi4/features/home/widgets/address_box.dart';
+import 'package:nukdi4/features/search/screens/search_screen.dart';
+import 'package:nukdi4/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

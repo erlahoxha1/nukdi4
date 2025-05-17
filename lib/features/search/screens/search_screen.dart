@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:nukedi2/common/widgets/loader.dart';
-import 'package:nukedi2/constants/global_variables.dart';
-import 'package:nukedi2/features/home/widgets/address_box.dart';
-import 'package:nukedi2/features/product_details/screens/product_details_screen.dart';
-import 'package:nukedi2/features/search/services/search_services.dart';
-import 'package:nukedi2/features/search/widget/searched_product.dart';
-import 'package:nukedi2/models/product.dart';
+import 'package:nukdi4/common/widgets/loader.dart';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/home/widgets/address_box.dart';
+import 'package:nukdi4/features/product_details/screens/product_details_screen.dart';
+import 'package:nukdi4/features/search/services/search_services.dart';
+import 'package:nukdi4/features/search/widget/searched_product.dart';
+import 'package:nukdi4/models/product.dart';
 
 class SearchScreen extends StatefulWidget {
   static const String routeName = '/search-screen';
