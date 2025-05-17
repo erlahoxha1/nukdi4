@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nukdi2/features/admin/screens/add_product_screen.dart';
 import 'package:nukdi2/features/auth/screens/auth_screen.dart';
+import 'package:nukdi2/features/home/screens/category_deals_screen.dart';
 import 'package:nukdi2/features/home/screens/home_screens.dart';
 import 'package:nukdi2/common/widgets/bottom_bar.dart';
 import 'package:nukdi2/features/admin/screens/admin_screen.dart';
@@ -32,6 +33,14 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const AddProductScreen(),
+      );
+    case CategoryDealsScreen.routeName:
+    var category = routeSettings.arguments as String;
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) =>  CategoryDealsScreen(
+          category: category,
+        ),
       );
 
     default:
