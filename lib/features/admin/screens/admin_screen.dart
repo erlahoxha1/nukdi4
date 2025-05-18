@@ -2,6 +2,8 @@ import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/features/admin/screens/posts_screen.dart';
+import 'package:nukdi4/features/admin/screens/analtyics_screen.dart';
+
 
 class AdminScreen extends StatefulWidget {
   static const String routeName = '/admin-screen';
@@ -48,6 +50,7 @@ class _AdminScreenState extends State<AdminScreen> {
                   'assets/images/applogo.png',
                   width: 50,
                   height: 100,
+                  color: Colors.black,
                 ),
               ),
               const Text(
@@ -71,7 +74,6 @@ class _AdminScreenState extends State<AdminScreen> {
           BottomNavigationBarItem(
             icon: Container(
               width: bottomBarWidth,
-
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
@@ -90,7 +92,6 @@ class _AdminScreenState extends State<AdminScreen> {
           BottomNavigationBarItem(
             icon: Container(
               width: bottomBarWidth,
-
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(

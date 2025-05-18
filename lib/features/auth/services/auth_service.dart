@@ -16,29 +16,31 @@ import 'package:nukdi4/features/admin/screens/admin_screen.dart';
 import 'package:nukdi4/common/widgets/bottom_bar.dart';
 
 class AuthService {
-  // Sign Up
+  // sign up user
   void signUpUser({
     required BuildContext context,
-    required String name,
     required String email,
     required String password,
+    required String name,
   }) async {
     try {
       User user = User(
         id: '',
         name: name,
-        email: email,
         password: password,
+        email: email,
         address: '',
-        type: 'user',
+        type: '',
         token: '',
-        cart: [], // ✅ This line fixes the problem
+        cart: [],
       );
 
       http.Response res = await http.post(
         Uri.parse('$uri/api/signup'),
         body: user.toJson(),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
       );
 
       httpErrorHandle(
@@ -47,7 +49,7 @@ class AuthService {
         onSuccess: () {
           showSnackBar(
             context,
-            'Account created! Login with the same credentials',
+            'Account created! Login with the same credentials!',
           );
         },
       );
@@ -56,7 +58,7 @@ class AuthService {
     }
   }
 
-  // Sign In
+  // sign in user
   void signInUser({
     required BuildContext context,
     required String email,
@@ -65,37 +67,26 @@ class AuthService {
     try {
       http.Response res = await http.post(
         Uri.parse('$uri/api/signin'),
-        body: jsonEncode({'email': email, 'password': password}),
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
       );
-
       httpErrorHandle(
         response: res,
         context: context,
         onSuccess: () async {
           SharedPreferences prefs = await SharedPreferences.getInstance();
-          final decodedUser = jsonDecode(res.body);
-
-          // Save user in provider
           Provider.of<UserProvider>(context, listen: false).setUser(res.body);
-
-          // Save token
-          await prefs.setString('x-auth-token', decodedUser['token']);
-
-          // Navigate based on user type
-          if (decodedUser['type'] == 'admin') {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              AdminScreen.routeName,
-              (route) => false,
-            );
-          } else {
-            Navigator.pushNamedAndRemoveUntil(
-              context,
-              BottomBar.routeName,
-              (route) => false,
-            );
-          }
+          await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            BottomBar.routeName,
+            (route) => false,
+          );
         },
       );
     } catch (e) {
@@ -103,43 +94,42 @@ class AuthService {
     }
   }
 
-  // Get user data on app start
-  void getUserData(BuildContext context) async {
+  // get user data
+  void getUserData(
+    BuildContext context,
+  ) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
 
       if (token == null) {
         prefs.setString('x-auth-token', '');
-        return;
       }
 
-      // Check if token is valid
-      http.Response tokenRes = await http.post(
+      var tokenRes = await http.post(
         Uri.parse('$uri/tokenIsValid'),
-        headers: {
+        headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': token,
+          'x-auth-token': token!
         },
       );
 
-      var isValid = jsonDecode(tokenRes.body);
+      var response = jsonDecode(tokenRes.body);
 
-      if (isValid == true) {
-        // Get user data
+      if (response == true) {
         http.Response userRes = await http.get(
           Uri.parse('$uri/'),
-          headers: {
+          headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
-            'x-auth-token': token,
+            'x-auth-token': token
           },
         );
 
-        // Set user in provider
-        Provider.of<UserProvider>(context, listen: false).setUser(userRes.body);
+        var userProvider = Provider.of<UserProvider>(context, listen: false);
+        userProvider.setUser(userRes.body);
       }
     } catch (e) {
-      showSnackBar(context, 'Something went wrong: ${e.toString()}');
+      showSnackBar(context, e.toString());
     }
   }
 }
