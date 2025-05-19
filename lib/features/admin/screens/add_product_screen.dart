@@ -21,9 +21,9 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  final TextEditingController quanityController = TextEditingController();
+  final TextEditingController quantityController =
+      TextEditingController(); // ✅ fixed spelling
   final AdminServices adminServices = AdminServices();
-
 
   String category = 'cat1';
   List<File> images = [];
@@ -32,32 +32,31 @@ class _AddProductScreenState extends State<AddProductScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     productNameController.dispose();
     descriptionController.dispose();
     priceController.dispose();
-    quanityController.dispose();
+    quantityController.dispose(); // ✅ fixed spelling
+    super.dispose();
   }
 
-  // ktu kategorit e gjerave qe shesim kujdes te global
   List<String> productCategories = ['cat1', 'cat2', 'cat3', 'cat4'];
-/*
-  void sellProduct() {
 
-    if (_addProductFormKey.currentState!.validate() || images.isNotEmpty) {
+  void sellProduct() {
+    if (_addProductFormKey.currentState!.validate() && images.isNotEmpty) {
       adminServices.sellProduct(
         context: context,
         name: productNameController.text,
         description: descriptionController.text,
         price: double.parse(priceController.text),
-        quantity: int.parse(quanityController.text),
+        quantity: double.parse(quantityController.text), // ✅ no more error
         category: category,
         images: images,
       );
+    } else {
+      showSnackBar(context, 'Please fill all fields and add images');
     }
-
   }
-*/
+
   void selectImages() async {
     var res = await pickImages();
     setState(() {
@@ -153,7 +152,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 CustomTextField(controller: priceController, hintText: 'Price'),
                 const SizedBox(height: 10),
                 CustomTextField(
-                  controller: quanityController,
+                  controller: quantityController,
                   hintText: 'Quantity ',
                 ),
                 const SizedBox(height: 10),
@@ -177,7 +176,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                CustomButton(text: 'Sell', onTap: (){}),
+                CustomButton(
+                  text: 'Sell',
+                  onTap: sellProduct, // ✅ works now
+                ),
               ],
             ),
           ),

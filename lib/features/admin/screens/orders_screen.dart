@@ -1,5 +1,5 @@
 import 'package:nukdi4/common/widgets/loader.dart';
-import 'package:nukdi4/features/account/widgets/single_product.dart';
+import 'package:nukdi4/common/widgets/single_product.dart';
 import 'package:nukdi4/features/admin/services/admin_services.dart';
 import 'package:nukdi4/features/order_details/screens/order_details.dart';
 import 'package:nukdi4/models/order.dart';

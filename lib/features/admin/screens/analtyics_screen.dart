@@ -1,8 +1,7 @@
 import 'package:nukdi4/common/widgets/loader.dart';
 import 'package:nukdi4/features/admin/models/sales.dart';
 import 'package:nukdi4/features/admin/services/admin_services.dart';
-import 'package:nukdi4/features/admin/widgets/category_products_chart.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:nukdi4/features/admin/widgets/category_products_chart.dart'; // ⬅️ Make sure this is correct
 import 'package:flutter/material.dart';
 
 class AnalyticsScreen extends StatefulWidget {
@@ -43,17 +42,14 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(height: 20),
               SizedBox(
                 height: 250,
-                child: CategoryProductsChart(seriesList: [
-                  charts.Series(
-                    id: 'Sales',
-                    data: earnings!,
-                    domainFn: (Sales sales, _) => sales.label,
-                    measureFn: (Sales sales, _) => sales.earning,
-                  ),
-                ]),
-              )
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: CategoryProductsChart(earnings: earnings!),
+                ),
+              ),
             ],
           );
   }

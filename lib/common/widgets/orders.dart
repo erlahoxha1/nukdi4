@@ -1,10 +1,11 @@
 import 'package:nukdi4/common/widgets/loader.dart';
 import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/features/account/services/account_services.dart';
-import 'package:nukdi4/features/account/widgets/single_product.dart';
+import 'package:nukdi4/common/widgets/single_product.dart';
 import 'package:nukdi4/features/order_details/screens/order_details.dart';
 import 'package:nukdi4/models/order.dart';
 import 'package:flutter/material.dart';
+
 
 class Orders extends StatefulWidget {
   const Orders({Key? key}) : super(key: key);

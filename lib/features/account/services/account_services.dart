@@ -4,7 +4,7 @@ import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/constants/utils.dart';
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
 import 'package:nukdi4/models/order.dart';
-import 'package:nukdi4/providers/user_provider.dart';
+import 'package:nukdi4/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;

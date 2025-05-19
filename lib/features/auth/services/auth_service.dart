@@ -2,15 +2,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:nukdi4/models/user.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:nukdi4/models/user.dart';
 import 'package:nukdi4/constants/error_handling.dart';
 import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/constants/utils.dart';
 import 'package:nukdi4/provider/user_provider.dart';
-
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
 import 'package:nukdi4/features/admin/screens/admin_screen.dart';
 import 'package:nukdi4/common/widgets/bottom_bar.dart';
@@ -67,14 +65,12 @@ class AuthService {
     try {
       http.Response res = await http.post(
         Uri.parse('$uri/api/signin'),
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+        body: jsonEncode({'email': email, 'password': password}),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
+
       httpErrorHandle(
         response: res,
         context: context,
@@ -82,11 +78,22 @@ class AuthService {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           Provider.of<UserProvider>(context, listen: false).setUser(res.body);
           await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            BottomBar.routeName,
-            (route) => false,
-          );
+
+          final userType = jsonDecode(res.body)['type'];
+
+          if (userType == 'admin') {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              AdminScreen.routeName,
+              (route) => false,
+            );
+          } else {
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              BottomBar.routeName,
+              (route) => false,
+            );
+          }
         },
       );
     } catch (e) {
@@ -95,9 +102,7 @@ class AuthService {
   }
 
   // get user data
-  void getUserData(
-    BuildContext context,
-  ) async {
+  void getUserData(BuildContext context) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
@@ -110,7 +115,7 @@ class AuthService {
         Uri.parse('$uri/tokenIsValid'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': token!
+          'x-auth-token': token!,
         },
       );
 
@@ -121,7 +126,7 @@ class AuthService {
           Uri.parse('$uri/'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
-            'x-auth-token': token
+            'x-auth-token': token,
           },
         );
 
