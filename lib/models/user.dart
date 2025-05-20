@@ -5,7 +5,7 @@ class User {
   final String name;
   final String email;
   final String password;
-  final String phone;     // ✅ NEW field
+  final String phone;
   final String address;
   final String type;
   final String token;
@@ -16,7 +16,7 @@ class User {
     required this.name,
     required this.email,
     required this.password,
-    required this.phone,   // ✅ constructor
+    required this.phone,
     required this.address,
     required this.type,
     required this.token,
@@ -29,7 +29,7 @@ class User {
       'name': name,
       'email': email,
       'password': password,
-      'phone': phone,     // ✅ in map
+      'phone': phone,
       'address': address,
       'type': type,
       'token': token,
@@ -40,18 +40,19 @@ class User {
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
       id: map['_id'] ?? '',
-      name: map['name'] ?? '',
+      name: map['name'] ?? '${map['firstName'] ?? ''} ${map['lastName'] ?? ''}',
       email: map['email'] ?? '',
       password: map['password'] ?? '',
-      phone: map['phone'] ?? '', // ✅ parse from JSON
+      phone: map['phone'] ?? '',
       address: map['address'] ?? '',
       type: map['type'] ?? '',
       token: map['token'] ?? '',
-      cart: List<Map<String, dynamic>>.from(
-        map['cart']?.map(
-          (x) => Map<String, dynamic>.from(x),
-        ),
-      ),
+      cart:
+          map['cart'] != null
+              ? List<Map<String, dynamic>>.from(
+                map['cart'].map((x) => Map<String, dynamic>.from(x)),
+              )
+              : [],
     );
   }
 
@@ -64,7 +65,7 @@ class User {
     String? name,
     String? email,
     String? password,
-    String? phone,     // ✅ allow update
+    String? phone,
     String? address,
     String? type,
     String? token,

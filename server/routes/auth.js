@@ -18,22 +18,22 @@ authRouter.post("/api/signup", async (req, res) => {
     const hashedPassword = await bcryptjs.hash(password, 8);
 
     let user = new User({
-  firstName,                        // ✅ Add this
-  lastName,                         // ✅ And this
-  name: `${firstName} ${lastName}`, // (optional but nice)
-  email,
-  password: hashedPassword,
-  phone,
-});
+      firstName,
+      lastName,
+      name: `${firstName} ${lastName}`,
+      email,
+      password: hashedPassword,
+      phone,
+    });
 
     user = await user.save();
-    res.json(user);
+    res.json({ ...user._doc, name: `${user.firstName} ${user.lastName}` }); // ✅ ensure name is returned
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
-// Sign In
+// SIGN IN
 authRouter.post("/api/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -49,15 +49,16 @@ authRouter.post("/api/signin", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, "passwordKey");
-    res.json({ token, ...user._doc });
+    res.json({ token, ...user._doc, name: `${user.firstName} ${user.lastName}` }); // ✅ ensure name
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
 
+// VALIDATE TOKEN
 authRouter.post("/tokenIsValid", async (req, res) => {
   try {
-    const token = req.header["x-auth-token"];
+    const token = req.header("x-auth-token");
     if (!token) return res.json(false);
     const verified = jwt.verify(token, "passwordKey");
     if (!verified) return res.json(false);
@@ -70,13 +71,17 @@ authRouter.post("/tokenIsValid", async (req, res) => {
   }
 });
 
-// Get user
+// GET USER
 authRouter.get("/", auth, async (req, res) => {
   const user = await User.findById(req.user);
-  res.json({ ...user._doc, token: req.token });
+  res.json({
+    ...user._doc,
+    name: `${user.firstName} ${user.lastName}`, // ✅ include full name
+    token: req.token,
+  });
 });
 
-// ✅ UPDATE PROFILE
+// UPDATE PROFILE
 authRouter.put("/api/update-profile", auth, async (req, res) => {
   try {
     const { firstName, lastName, email, phone } = req.body;
@@ -85,6 +90,8 @@ authRouter.put("/api/update-profile", auth, async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(
       req.user,
       {
+        firstName,
+        lastName,
         name: fullName,
         email,
         phone,
@@ -92,7 +99,11 @@ authRouter.put("/api/update-profile", auth, async (req, res) => {
       { new: true }
     );
 
-    res.json({ ...updatedUser._doc, token: req.token });
+    res.json({
+      ...updatedUser._doc,
+      name: `${updatedUser.firstName} ${updatedUser.lastName}`, // ✅ ensure returned name
+      token: req.token,
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
