@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:nukdi4/models/user.dart';
 import 'package:flutter/material.dart';
-
 
 class UserProvider extends ChangeNotifier {
   User _user = User(
@@ -10,6 +8,7 @@ class UserProvider extends ChangeNotifier {
     name: '',
     email: '',
     password: '',
+    phone: '', // ✅ add this line
     address: '',
     type: '',
     token: '',

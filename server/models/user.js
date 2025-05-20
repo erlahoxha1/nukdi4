@@ -2,11 +2,16 @@ const mongoose = require("mongoose");
 const { productSchema } = require("./product");
 
 const userSchema = mongoose.Schema({
-  name: {
-    required: true,
-    type: String,
-    trim: true,
-  },
+  firstName: {
+  required: true,
+  type: String,
+  trim: true,
+},
+lastName: {
+  required: true,
+  type: String,
+  trim: true,
+},
   email: {
     required: true,
     type: String,
@@ -23,6 +28,10 @@ const userSchema = mongoose.Schema({
   password: {
     required: true,
     type: String,
+  },
+  phone: {
+    type: String,        // 👈 NEW field
+    trim: true,
   },
   address: {
     type: String,

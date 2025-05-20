@@ -8,22 +8,24 @@ const auth = require("../middlewares/auth");
 // SIGN UP
 authRouter.post("/api/signup", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { firstName, lastName, email, password, phone } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ msg: "User with same email already exists!" });
+      return res.status(400).json({ msg: "User with same email already exists!" });
     }
 
     const hashedPassword = await bcryptjs.hash(password, 8);
 
     let user = new User({
-      email,
-      password: hashedPassword,
-      name,
-    });
+  firstName,                        // ✅ Add this
+  lastName,                         // ✅ And this
+  name: `${firstName} ${lastName}`, // (optional but nice)
+  email,
+  password: hashedPassword,
+  phone,
+});
+
     user = await user.save();
     res.json(user);
   } catch (e) {
@@ -31,17 +33,14 @@ authRouter.post("/api/signup", async (req, res) => {
   }
 });
 
-// Sign In Route
-// Exercise
+// Sign In
 authRouter.post("/api/signin", async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res
-        .status(400)
-        .json({ msg: "User with this email does not exist!" });
+      return res.status(400).json({ msg: "User with this email does not exist!" });
     }
 
     const isMatch = await bcryptjs.compare(password, user.password);
@@ -71,10 +70,32 @@ authRouter.post("/tokenIsValid", async (req, res) => {
   }
 });
 
-// get user data
+// Get user
 authRouter.get("/", auth, async (req, res) => {
   const user = await User.findById(req.user);
   res.json({ ...user._doc, token: req.token });
+});
+
+// ✅ UPDATE PROFILE
+authRouter.put("/api/update-profile", auth, async (req, res) => {
+  try {
+    const { firstName, lastName, email, phone } = req.body;
+    const fullName = `${firstName} ${lastName}`;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user,
+      {
+        name: fullName,
+        email,
+        phone,
+      },
+      { new: true }
+    );
+
+    res.json({ ...updatedUser._doc, token: req.token });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
 module.exports = authRouter;

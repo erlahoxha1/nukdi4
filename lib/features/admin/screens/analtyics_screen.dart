@@ -34,23 +34,20 @@ class _AnalyticsScreenState extends State<AnalyticsScreen> {
     return earnings == null || totalSales == null
         ? const Loader()
         : Column(
-            children: [
-              Text(
-                '\$$totalSales',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+          children: [
+            Text(
+              '\$$totalSales',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              height: 250,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: CategoryProductsChart(earnings: earnings!),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 250,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: CategoryProductsChart(earnings: earnings!),
-                ),
-              ),
-            ],
-          );
+            ),
+          ],
+        );
   }
 }

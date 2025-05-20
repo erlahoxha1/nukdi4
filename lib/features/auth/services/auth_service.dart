@@ -14,28 +14,25 @@ import 'package:nukdi4/features/admin/screens/admin_screen.dart';
 import 'package:nukdi4/common/widgets/bottom_bar.dart';
 
 class AuthService {
-  // sign up user
+  // ✅ Sign up user
   void signUpUser({
     required BuildContext context,
     required String email,
     required String password,
-    required String name,
+    required String firstName,
+    required String lastName,
+    required String phone,
   }) async {
     try {
-      User user = User(
-        id: '',
-        name: name,
-        password: password,
-        email: email,
-        address: '',
-        type: '',
-        token: '',
-        cart: [],
-      );
-
       http.Response res = await http.post(
         Uri.parse('$uri/api/signup'),
-        body: user.toJson(),
+        body: jsonEncode({
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'password': password,
+          'phone': phone,
+        }),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -56,7 +53,7 @@ class AuthService {
     }
   }
 
-  // sign in user
+  // ✅ Sign in user
   void signInUser({
     required BuildContext context,
     required String email,
@@ -101,7 +98,7 @@ class AuthService {
     }
   }
 
-  // get user data
+  // ✅ Get user data
   void getUserData(BuildContext context) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -133,6 +130,44 @@ class AuthService {
         var userProvider = Provider.of<UserProvider>(context, listen: false);
         userProvider.setUser(userRes.body);
       }
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  // ✅ Update user profile
+  void updateUserProfile({
+    required BuildContext context,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+  }) async {
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+      http.Response res = await http.put(
+        Uri.parse('$uri/api/update-profile'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+        body: jsonEncode({
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'phone': phone,
+        }),
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          userProvider.setUser(res.body);
+          showSnackBar(context, 'Profile updated!');
+        },
+      );
     } catch (e) {
       showSnackBar(context, e.toString());
     }

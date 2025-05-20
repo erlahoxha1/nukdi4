@@ -4,10 +4,7 @@ import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/features/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-enum Auth {
-  signin,
-  signup,
-}
+enum Auth { signin, signup }
 
 class AuthScreen extends StatefulWidget {
   static const String routeName = '/auth-screen';
@@ -22,16 +19,21 @@ class _AuthScreenState extends State<AuthScreen> {
   final _signUpFormKey = GlobalKey<FormState>();
   final _signInFormKey = GlobalKey<FormState>();
   final AuthService authService = AuthService();
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   @override
   void dispose() {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+    _phoneController.dispose();
   }
 
   void signUpUser() {
@@ -39,7 +41,9 @@ class _AuthScreenState extends State<AuthScreen> {
       context: context,
       email: _emailController.text,
       password: _passwordController.text,
-      name: _nameController.text,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      phone: _phoneController.text,
     );
   }
 
@@ -63,20 +67,16 @@ class _AuthScreenState extends State<AuthScreen> {
             children: [
               const Text(
                 'Welcome',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
               ),
               ListTile(
-                tileColor: _auth == Auth.signup
-                    ? GlobalVariables.backgroundColor
-                    : GlobalVariables.greyBackgroundCOlor,
+                tileColor:
+                    _auth == Auth.signup
+                        ? GlobalVariables.backgroundColor
+                        : GlobalVariables.greyBackgroundCOlor,
                 title: const Text(
                   'Create Account',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 leading: Radio(
                   activeColor: GlobalVariables.secondaryColor,
@@ -98,8 +98,18 @@ class _AuthScreenState extends State<AuthScreen> {
                     child: Column(
                       children: [
                         CustomTextField(
-                          controller: _nameController,
-                          hintText: 'Name',
+                          controller: _firstNameController,
+                          hintText: 'First Name',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextField(
+                          controller: _lastNameController,
+                          hintText: 'Last Name',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomTextField(
+                          controller: _phoneController,
+                          hintText: 'Phone Number',
                         ),
                         const SizedBox(height: 10),
                         CustomTextField(
@@ -119,20 +129,19 @@ class _AuthScreenState extends State<AuthScreen> {
                               signUpUser();
                             }
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),
                 ),
               ListTile(
-                tileColor: _auth == Auth.signin
-                    ? GlobalVariables.backgroundColor
-                    : GlobalVariables.greyBackgroundCOlor,
+                tileColor:
+                    _auth == Auth.signin
+                        ? GlobalVariables.backgroundColor
+                        : GlobalVariables.greyBackgroundCOlor,
                 title: const Text(
                   'Sign-In.',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 leading: Radio(
                   activeColor: GlobalVariables.secondaryColor,
@@ -170,7 +179,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               signInUser();
                             }
                           },
-                        )
+                        ),
                       ],
                     ),
                   ),

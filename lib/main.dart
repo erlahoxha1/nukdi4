@@ -1,14 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:nukdi4/features/admin/screens/admin_screen.dart';
 import 'package:nukdi4/features/home/screens/home_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:nukdi4/provider/user_provider.dart'; // ✅ This fixes your error
-import 'package:flutter/material.dart';
-import 'package:nukdi4/constants/global_variables.dart';
-import 'package:nukdi4/router.dart';
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
-import 'package:provider/provider.dart';
 import 'package:nukdi4/features/auth/services/auth_service.dart';
+import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/common/widgets/bottom_bar.dart';
+import 'package:nukdi4/common/widgets/onboarding_screen.dart';
+import 'package:nukdi4/provider/user_provider.dart';
+import 'package:nukdi4/router.dart';
 
 void main() {
   runApp(
@@ -28,6 +29,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AuthService authService = AuthService();
+
   @override
   void initState() {
     super.initState();
@@ -50,12 +52,9 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       onGenerateRoute: (settings) => generateRoute(settings),
-      home:
-          Provider.of<UserProvider>(context).user.token.isNotEmpty
-              ? Provider.of<UserProvider>(context).user.type == 'user'
-                  ? const BottomBar()
-                  : const AdminScreen()
-              : const AuthScreen(),
+
+      // 👇 Always show onboarding screen first
+      home: const OnboardingScreen(),
     );
   }
 }
