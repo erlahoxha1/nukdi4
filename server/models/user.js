@@ -3,12 +3,10 @@ const { productSchema } = require("./product");
 
 const userSchema = mongoose.Schema({
   firstName: {
-  required: true,
   type: String,
   trim: true,
 },
 lastName: {
-  required: true,
   type: String,
   trim: true,
 },

@@ -10,6 +10,15 @@ authRouter.post("/api/signup", async (req, res) => {
   try {
     const { firstName, lastName, email, password, phone } = req.body;
 
+    // Custom validation for name and surname
+    if (!firstName && !lastName) {
+      return res.status(400).json({ msg: "Please fill up your name and surname" });
+    } else if (!firstName) {
+      return res.status(400).json({ msg: "Please fill up your name" });
+    } else if (!lastName) {
+      return res.status(400).json({ msg: "Please fill up your surname" });
+    }
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ msg: "User with same email already exists!" });
@@ -109,7 +118,7 @@ authRouter.put("/api/update-profile", auth, async (req, res) => {
   }
 });
 
-// ✅ UPDATE ADDRESS
+// UPDATE ADDRESS
 authRouter.put("/api/update-address", auth, async (req, res) => {
   try {
     const { address } = req.body;
