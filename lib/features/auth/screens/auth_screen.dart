@@ -1,13 +1,8 @@
-import 'package:nukdi4/common/widgets/custom_button.dart';
-import 'package:nukdi4/common/widgets/custom_textfield.dart';
-import 'package:nukdi4/constants/global_variables.dart';
-import 'package:nukdi4/features/auth/services/auth_service.dart';
 import 'package:flutter/material.dart';
-
-enum Auth { signin, signup }
+import 'package:nukdi4/features/auth/services/auth_service.dart';
 
 class AuthScreen extends StatefulWidget {
-  static const String routeName = '/auth-screen';
+  static const routeName = '/auth-screen';
   const AuthScreen({Key? key}) : super(key: key);
 
   @override
@@ -15,177 +10,183 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  Auth _auth = Auth.signup;
-  final _signUpFormKey = GlobalKey<FormState>();
-  final _signInFormKey = GlobalKey<FormState>();
+  bool isSignUp = true;
+
   final AuthService authService = AuthService();
 
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
-    super.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
     _phoneController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
-  void signUpUser() {
-    authService.signUpUser(
-      context: context,
-      email: _emailController.text,
-      password: _passwordController.text,
-      firstName: _firstNameController.text,
-      lastName: _lastNameController.text,
-      phone: _phoneController.text,
-    );
-  }
-
-  void signInUser() {
-    authService.signInUser(
-      context: context,
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+  void _handleAuth() {
+    if (isSignUp) {
+      authService.signUpUser(
+        context: context,
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        firstName: _firstNameController.text.trim(),
+        lastName: _lastNameController.text.trim(),
+        phone: _phoneController.text.trim(),
+      );
+    } else {
+      authService.signInUser(
+        context: context,
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: GlobalVariables.greyBackgroundCOlor,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Welcome',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+      body: Stack(
+        children: [
+          // 🌸 Background image
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/back2.jpg'),
+                fit: BoxFit.cover,
               ),
-              ListTile(
-                tileColor:
-                    _auth == Auth.signup
-                        ? GlobalVariables.backgroundColor
-                        : GlobalVariables.greyBackgroundCOlor,
-                title: const Text(
-                  'Create Account',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                leading: Radio(
-                  activeColor: GlobalVariables.secondaryColor,
-                  value: Auth.signup,
-                  groupValue: _auth,
-                  onChanged: (Auth? val) {
-                    setState(() {
-                      _auth = val!;
-                    });
-                  },
-                ),
-              ),
-              if (_auth == Auth.signup)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: GlobalVariables.backgroundColor,
-                  child: Form(
-                    key: _signUpFormKey,
-                    child: Column(
-                      children: [
-                        CustomTextField(
-                          controller: _firstNameController,
-                          hintText: 'First Name',
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _lastNameController,
-                          hintText: 'Last Name',
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _phoneController,
-                          hintText: 'Phone Number',
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _emailController,
-                          hintText: 'Email',
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _passwordController,
-                          hintText: 'Password',
-                        ),
-                        const SizedBox(height: 10),
-                        CustomButton(
-                          text: 'Sign Up',
-                          onTap: () {
-                            if (_signUpFormKey.currentState!.validate()) {
-                              signUpUser();
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ListTile(
-                tileColor:
-                    _auth == Auth.signin
-                        ? GlobalVariables.backgroundColor
-                        : GlobalVariables.greyBackgroundCOlor,
-                title: const Text(
-                  'Sign-In.',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                leading: Radio(
-                  activeColor: GlobalVariables.secondaryColor,
-                  value: Auth.signin,
-                  groupValue: _auth,
-                  onChanged: (Auth? val) {
-                    setState(() {
-                      _auth = val!;
-                    });
-                  },
-                ),
-              ),
-              if (_auth == Auth.signin)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  color: GlobalVariables.backgroundColor,
-                  child: Form(
-                    key: _signInFormKey,
-                    child: Column(
-                      children: [
-                        CustomTextField(
-                          controller: _emailController,
-                          hintText: 'Email',
-                        ),
-                        const SizedBox(height: 10),
-                        CustomTextField(
-                          controller: _passwordController,
-                          hintText: 'Password',
-                        ),
-                        const SizedBox(height: 10),
-                        CustomButton(
-                          text: 'Sign In',
-                          onTap: () {
-                            if (_signInFormKey.currentState!.validate()) {
-                              signInUser();
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-            ],
+            ),
           ),
+
+          // 🌫️ Overlay
+          Container(color: Colors.white.withOpacity(0.2)),
+
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.95),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Welcome",
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // 🌿 Radio Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Radio(
+                          value: true,
+                          groupValue: isSignUp,
+                          onChanged: (_) => setState(() => isSignUp = true),
+                          activeColor: Colors.teal,
+                        ),
+                        const Text(
+                          "Create Account",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 20),
+                        Radio(
+                          value: false,
+                          groupValue: isSignUp,
+                          onChanged: (_) => setState(() => isSignUp = false),
+                          activeColor: Colors.teal,
+                        ),
+                        const Text(
+                          "Sign In.",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    if (isSignUp) ...[
+                      _buildInput(_firstNameController, "First Name"),
+                      const SizedBox(height: 10),
+                      _buildInput(_lastNameController, "Last Name"),
+                      const SizedBox(height: 10),
+                      _buildInput(_phoneController, "Phone Number"),
+                      const SizedBox(height: 10),
+                    ],
+
+                    _buildInput(_emailController, "Email"),
+                    const SizedBox(height: 10),
+                    _buildInput(_passwordController, "Password", obscure: true),
+
+                    const SizedBox(height: 25),
+
+                    ElevatedButton(
+                      onPressed: _handleAuth,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.teal,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      child: Text(
+                        isSignUp ? "Sign Up" : "Sign In",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInput(
+    TextEditingController controller,
+    String hint, {
+    bool obscure = false,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: obscure,
+      decoration: InputDecoration(
+        hintText: hint,
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 14,
+          horizontal: 16,
+        ),
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
         ),
       ),
     );
