@@ -22,7 +22,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = Provider.of<UserProvider>(context, listen: false).user;
     final fullNameParts = user.name.split(' ');
     final firstName = fullNameParts.first;
-    final lastName = fullNameParts.length > 1 ? fullNameParts.sublist(1).join(' ') : '';
+    final lastName =
+        fullNameParts.length > 1 ? fullNameParts.sublist(1).join(' ') : '';
 
     _firstNameController = TextEditingController(text: firstName);
     _lastNameController = TextEditingController(text: lastName);
@@ -39,23 +40,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  void saveProfile() {
-    AuthService().updateUserProfile(
+  void saveProfile() async {
+    await AuthService().updateUserProfile(
       context: context,
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
       email: _emailController.text.trim(),
       phone: _phoneController.text.trim(),
     );
+
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Profile Updated"),
+          content: const Text("Your profile has been successfully updated."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Edit Profile'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Edit Profile'), centerTitle: true),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -72,6 +89,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: saveProfile,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
+                backgroundColor: Colors.teal.shade50,
+                foregroundColor: Colors.teal.shade900,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
               ),
               child: const Text('Save Changes'),
             ),

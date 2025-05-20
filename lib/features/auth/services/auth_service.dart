@@ -136,7 +136,7 @@ class AuthService {
   }
 
   // ✅ Update user profile
-  void updateUserProfile({
+  Future<void> updateUserProfile({
     required BuildContext context,
     required String firstName,
     required String lastName,
@@ -165,7 +165,35 @@ class AuthService {
         context: context,
         onSuccess: () {
           userProvider.setUser(res.body);
-          showSnackBar(context, 'Profile updated!');
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  // ✅ Update user address (NEW)
+  Future<void> updateUserAddress({
+    required BuildContext context,
+    required String address,
+  }) async {
+    try {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+      final res = await http.put(
+        Uri.parse('$uri/api/update-address'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+        body: jsonEncode({'address': address}),
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          userProvider.setUser(res.body);
         },
       );
     } catch (e) {

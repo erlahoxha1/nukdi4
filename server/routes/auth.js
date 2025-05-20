@@ -27,7 +27,7 @@ authRouter.post("/api/signup", async (req, res) => {
     });
 
     user = await user.save();
-    res.json({ ...user._doc, name: `${user.firstName} ${user.lastName}` }); // ✅ ensure name is returned
+    res.json({ ...user._doc, name: `${user.firstName} ${user.lastName}` });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -49,7 +49,7 @@ authRouter.post("/api/signin", async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, "passwordKey");
-    res.json({ token, ...user._doc, name: `${user.firstName} ${user.lastName}` }); // ✅ ensure name
+    res.json({ token, ...user._doc, name: `${user.firstName} ${user.lastName}` });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -76,7 +76,7 @@ authRouter.get("/", auth, async (req, res) => {
   const user = await User.findById(req.user);
   res.json({
     ...user._doc,
-    name: `${user.firstName} ${user.lastName}`, // ✅ include full name
+    name: `${user.firstName} ${user.lastName}`,
     token: req.token,
   });
 });
@@ -101,7 +101,28 @@ authRouter.put("/api/update-profile", auth, async (req, res) => {
 
     res.json({
       ...updatedUser._doc,
-      name: `${updatedUser.firstName} ${updatedUser.lastName}`, // ✅ ensure returned name
+      name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+      token: req.token,
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ✅ UPDATE ADDRESS
+authRouter.put("/api/update-address", auth, async (req, res) => {
+  try {
+    const { address } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user,
+      { address },
+      { new: true }
+    );
+
+    res.json({
+      ...updatedUser._doc,
+      name: `${updatedUser.firstName} ${updatedUser.lastName}`,
       token: req.token,
     });
   } catch (e) {
