@@ -1,188 +1,146 @@
-import 'package:nukdi4/constants/utils.dart';
-import 'package:nukdi4/features/address/services/address_services.dart';
 import 'package:flutter/material.dart';
-import 'package:pay/pay.dart';
-import 'package:provider/provider.dart';
-import 'package:nukdi4/common/widgets/custom_textfield.dart';
-import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/features/address/services/address_services.dart';
+import 'package:nukdi4/features/payment/paypal_payment_screen.dart';
 import 'package:nukdi4/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
-class AddressScreen extends StatefulWidget {
+class AddressScreen extends StatelessWidget {
   static const String routeName = '/address';
   final String totalAmount;
-  const AddressScreen({
-    Key? key,
-    required this.totalAmount,
-  }) : super(key: key);
 
-  @override
-  State<AddressScreen> createState() => _AddressScreenState();
-}
-
-class _AddressScreenState extends State<AddressScreen> {
-  final TextEditingController flatBuildingController = TextEditingController();
-  final TextEditingController areaController = TextEditingController();
-  final TextEditingController pincodeController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
-  final _addressFormKey = GlobalKey<FormState>();
-
-  String addressToBeUsed = "";
-  List<PaymentItem> paymentItems = [];
-  final AddressServices addressServices = AddressServices();
-
-  @override
-  void initState() {
-    super.initState();
-    paymentItems.add(
-      PaymentItem(
-        amount: widget.totalAmount,
-        label: 'Total Amount',
-        status: PaymentItemStatus.final_price,
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    flatBuildingController.dispose();
-    areaController.dispose();
-    pincodeController.dispose();
-    cityController.dispose();
-  }
-
-  void onGooglePayResult(res) {
-    if (Provider.of<UserProvider>(context, listen: false)
-        .user
-        .address
-        .isEmpty) {
-      addressServices.saveUserAddress(
-          context: context, address: addressToBeUsed);
-    }
-    addressServices.placeOrder(
-      context: context,
-      address: addressToBeUsed,
-      totalSum: double.parse(widget.totalAmount),
-    );
-  }
-
-  void payPressed(String addressFromProvider) {
-    addressToBeUsed = "";
-
-    bool isForm = flatBuildingController.text.isNotEmpty ||
-        areaController.text.isNotEmpty ||
-        pincodeController.text.isNotEmpty ||
-        cityController.text.isNotEmpty;
-
-    if (isForm) {
-      if (_addressFormKey.currentState!.validate()) {
-        addressToBeUsed =
-            '${flatBuildingController.text}, ${areaController.text}, ${cityController.text} - ${pincodeController.text}';
-      } else {
-        throw Exception('Please enter all the values!');
-      }
-    } else if (addressFromProvider.isNotEmpty) {
-      addressToBeUsed = addressFromProvider;
-    } else {
-      showSnackBar(context, 'ERROR');
-    }
-  }
+  const AddressScreen({Key? key, required this.totalAmount}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var address = context.watch<UserProvider>().user.address;
+    final address = context.watch<UserProvider>().user.address;
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
-            ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
+      backgroundColor: Colors.white,
+      body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (address.isNotEmpty)
-                Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black12,
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          address,
-                          style: const TextStyle(
-                            fontSize: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'OR',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Icon(Icons.arrow_back, size: 28),
+              ),
+              const SizedBox(height: 10),
+              _buildStepperBar(),
+              const SizedBox(height: 30),
+              const Text(
+                "Your Shipping Address",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.grey.shade100,
+                  border: Border.all(color: Colors.black12),
                 ),
-              Form(
-                key: _addressFormKey,
-                child: Column(
-                  children: [
-                    CustomTextField(
-                      controller: flatBuildingController,
-                      hintText: 'Flat, House no, Building',
+                child: Text(address, style: const TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                "Do you want to continue with this address?",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      PaypalPaymentScreen.routeName,
+                      arguments: {
+                        'address': address,
+                        'totalAmount': double.parse(totalAmount),
+                      },
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    const SizedBox(height: 10),
-                    CustomTextField(
-                      controller: areaController,
-                      hintText: 'Area, Street',
-                    ),
-                    const SizedBox(height: 10),
-                    CustomTextField(
-                      controller: pincodeController,
-                      hintText: 'Pincode',
-                    ),
-                    const SizedBox(height: 10),
-                    CustomTextField(
-                      controller: cityController,
-                      hintText: 'Town/City',
-                    ),
-                    const SizedBox(height: 10),
-                  ],
+                    backgroundColor: Colors.blue,
+                  ),
+                  child: const Text(
+                    "Yes, Continue to Payment",
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
-              GooglePayButton(
-                onPressed: () => payPressed(address),
-                paymentConfigurationAsset: 'gpay.json',
-                onPaymentResult: onGooglePayResult,
-                paymentItems: paymentItems,
-                height: 50,
-                //style: GooglePayButtonStyle.black,
-                type: GooglePayButtonType.buy,
-                margin: const EdgeInsets.only(top: 15),
-                loadingIndicator: const Center(
-                  child: CircularProgressIndicator(),
+              OutlinedButton.icon(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/add-address');
+                },
+                icon: const Icon(Icons.edit_location_alt_outlined, size: 20),
+                label: const Text(
+                  "No, Change Address",
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  side: const BorderSide(color: Colors.black12),
+                  foregroundColor: Colors.black87,
+                  minimumSize: const Size.fromHeight(50),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStepperBar() {
+    return Row(
+      children: [
+        _buildStep(icon: Icons.shopping_cart, label: 'Cart', isActive: false),
+        const Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+        _buildStep(icon: Icons.payment, label: 'Checkout', isActive: true),
+        const Expanded(child: Divider(thickness: 1, color: Colors.grey)),
+        _buildStep(icon: Icons.receipt_long, label: 'Order', isActive: false),
+      ],
+    );
+  }
+
+  Widget _buildStep({
+    required IconData icon,
+    required String label,
+    required bool isActive,
+  }) {
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 18,
+          backgroundColor: isActive ? Colors.blue : Colors.grey.shade300,
+          child: Icon(
+            icon,
+            size: 20,
+            color: isActive ? Colors.white : Colors.black45,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: isActive ? Colors.black : Colors.grey,
+          ),
+        ),
+      ],
     );
   }
 }

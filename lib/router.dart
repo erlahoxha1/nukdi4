@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:nukdi4/common/widgets/bottom_bar.dart';
 import 'package:nukdi4/features/address/screens/address_screen.dart';
+import 'package:nukdi4/features/account/screens/add_address_screen.dart'; // ✅ Add this
 import 'package:nukdi4/features/admin/screens/add_product_screen.dart';
-import 'package:nukdi4/features/admin/screens/admin_screen.dart'; // ✅ Added
+import 'package:nukdi4/features/admin/screens/admin_screen.dart';
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
 import 'package:nukdi4/features/home/screens/category_deals_screen.dart';
 import 'package:nukdi4/features/home/screens/home_screen.dart';
 import 'package:nukdi4/features/order_details/screens/order_details.dart';
+import 'package:nukdi4/features/payment/paypal_payment_screen.dart';
 import 'package:nukdi4/features/product_details/screens/product_details_screen.dart';
 import 'package:nukdi4/features/search/screens/search_screen.dart';
 import 'package:nukdi4/models/order.dart';
@@ -20,7 +22,7 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const AuthScreen(),
       );
 
-    case AdminScreen.routeName: // ✅ This is the route you were missing
+    case AdminScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const AdminScreen(),
@@ -77,6 +79,21 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => OrderDetailScreen(order: order),
+      );
+
+    case '/add-address': // ✅ ADDED THIS CASE
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const AddAddressScreen(),
+      );
+    case PaypalPaymentScreen.routeName:
+      final args = routeSettings.arguments as Map<String, dynamic>;
+      return MaterialPageRoute(
+        builder:
+            (_) => PaypalPaymentScreen(
+              address: args['address'],
+              totalAmount: args['totalAmount'],
+            ),
       );
 
     default:

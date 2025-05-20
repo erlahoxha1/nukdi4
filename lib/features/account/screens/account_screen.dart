@@ -37,7 +37,7 @@ class AccountScreen extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 28,
-                  backgroundColor: Colors.teal,
+                  backgroundColor: Colors.blue,
                   child: Icon(Icons.person, color: Colors.white, size: 30),
                 ),
                 const SizedBox(width: 15),
@@ -115,7 +115,7 @@ class AccountScreen extends StatelessWidget {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
-    Color iconColor = Colors.teal,
+    Color iconColor = Colors.blue,
   }) {
     return InkWell(
       onTap: onTap,

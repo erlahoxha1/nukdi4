@@ -16,6 +16,8 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   final TextEditingController _postalCodeController = TextEditingController();
   final TextEditingController _streetController = TextEditingController();
 
+  bool _isEditable = false;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +62,10 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
               ],
             ),
       );
+
+      setState(() {
+        _isEditable = false;
+      });
     }
   }
 
@@ -75,38 +81,74 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Address'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Add Address'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            buildField(_cityController, 'City'),
+            buildField(_cityController, 'City', _isEditable),
             const SizedBox(height: 10),
-            buildField(_countryController, 'Country'),
+            buildField(_countryController, 'Country', _isEditable),
             const SizedBox(height: 10),
-            buildField(_postalCodeController, 'Postal Code'),
+            buildField(_postalCodeController, 'Postal Code', _isEditable),
             const SizedBox(height: 10),
-            buildField(_streetController, 'Street Address'),
+            buildField(_streetController, 'Street Address', _isEditable),
             const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: saveAddress,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+
+            if (!_isEditable)
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    _isEditable = true;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueGrey,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text(
+                  'Change Address',
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
-              child: const Text('Save Address'),
-            ),
+
+            if (_isEditable)
+              ElevatedButton(
+                onPressed: saveAddress,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size.fromHeight(50),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: const Text('Save Address'),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget buildField(TextEditingController controller, String label) {
+  Widget buildField(
+    TextEditingController controller,
+    String label,
+    bool enabled,
+  ) {
     return TextField(
       controller: controller,
+      enabled: enabled,
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),

@@ -89,8 +89,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: saveProfile,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(50),
-                backgroundColor: Colors.teal.shade50,
-                foregroundColor: Colors.teal.shade900,
+                backgroundColor: Colors.blue.shade50,
+                foregroundColor: Colors.blue.shade900,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),

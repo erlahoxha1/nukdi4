@@ -6,17 +6,17 @@ class GlobalVariables {
   // COLORS
   static const appBarGradient = LinearGradient(
     colors: [
-      Color.fromARGB(255, 55, 101, 94),
-      Color.fromARGB(255, 55, 101, 94),
+      Color.fromARGB(255, 173, 216, 230), // Light Blue
+      Color.fromARGB(255, 224, 255, 255), // Light Cyan
     ],
     stops: [0.5, 1.0],
   );
 
-  static const secondaryColor = Color.fromRGBO(9, 84, 105, 1);
+  static const secondaryColor = Color(0xFF03A9F4); // Light Blue
   static const backgroundColor = Colors.white;
-  static const Color greyBackgroundCOlor = Color(0xffebecee);
-  static var selectedNavBarColor = Colors.cyan[800]!;
-  static const unselectedNavBarColor = Colors.black87;
+  static const greyBackgroundCOlor = Color(0xfff5f5f5); // Softer grey
+  static var selectedNavBarColor = Colors.lightBlueAccent[100]!;
+  static const unselectedNavBarColor = Colors.grey;
 
   static const List<String> carouselImages = [
     'https://images-eu.ssl-images-amazon.com/images/G/31/img21/Wireless/WLA/TS/D37847648_Accessories_savingdays_Jan22_Cat_PC_1500.jpg',

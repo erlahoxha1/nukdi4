@@ -1,14 +1,10 @@
-
 import 'package:nukdi4/common/widgets/stars.dart';
 import 'package:nukdi4/models/product.dart';
 import 'package:flutter/material.dart';
 
 class SearchedProduct extends StatelessWidget {
   final Product product;
-  const SearchedProduct({
-    Key? key,
-    required this.product,
-  }) : super(key: key);
+  const SearchedProduct({Key? key, required this.product}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +19,7 @@ class SearchedProduct extends StatelessWidget {
     return Column(
       children: [
         Container(
-          margin: const EdgeInsets.symmetric(
-            horizontal: 10,
-          ),
+          margin: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
               Image.network(
@@ -41,18 +35,14 @@ class SearchedProduct extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Text(
                       product.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
+                      style: const TextStyle(fontSize: 16),
                       maxLines: 2,
                     ),
                   ),
                   Container(
                     width: 235,
                     padding: const EdgeInsets.only(left: 10, top: 5),
-                    child: Stars(
-                      rating: avgRating,
-                    ),
+                    child: Stars(rating: avgRating),
                   ),
                   Container(
                     width: 235,
@@ -76,9 +66,7 @@ class SearchedProduct extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 10, top: 5),
                     child: const Text(
                       'In Stock',
-                      style: TextStyle(
-                        color: Colors.teal,
-                      ),
+                      style: TextStyle(color: Colors.blue),
                       maxLines: 2,
                     ),
                   ),
