@@ -30,6 +30,18 @@ const productSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  carBrand: {
+    type: String,
+    required: true,
+  },
+  carModel: {
+    type: String,
+    required: true,
+  },
+  carYear: {
+    type: String,
+    required: true,
+  },
   ratings: [ratingSchema],
 });
 

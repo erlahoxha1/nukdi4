@@ -16,7 +16,7 @@ class CartProduct extends StatelessWidget {
     final cartServices = CartServices();
 
     return Dismissible(
-      key: Key(product.id.toString()), // ✅ FIXED: ensure string key
+      key: Key(product.id.toString()),
       direction: DismissDirection.endToStart,
       background: Container(
         alignment: Alignment.centerRight,
@@ -31,7 +31,7 @@ class CartProduct extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         switchInCurve: Curves.easeIn,
         child: Container(
-          key: ValueKey(quantity), // ✅ animate on quantity change
+          key: ValueKey(quantity),
           margin: const EdgeInsets.symmetric(vertical: 8),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -85,13 +85,12 @@ class CartProduct extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 2),
-                    const Text(
-                      'Eligible for FREE Shipping',
-                      style: TextStyle(fontSize: 12, color: Colors.black54),
-                    ),
-                    const Text(
-                      'In Stock',
-                      style: TextStyle(fontSize: 12, color: Colors.teal),
+                    Text(
+                      product.quantity > 0 ? 'In Stock' : 'Out of Stock',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: product.quantity > 0 ? Colors.teal : Colors.red,
+                      ),
                     ),
                   ],
                 ),
@@ -123,10 +122,18 @@ class CartProduct extends StatelessWidget {
                   IconButton(
                     icon: const Icon(Icons.add, size: 18),
                     onPressed: () {
-                      cartServices.addToCart(
-                        context: context,
-                        product: product,
-                      );
+                      if (quantity < product.quantity) {
+                        cartServices.addToCart(
+                          context: context,
+                          product: product,
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Not enough stock available'),
+                          ),
+                        );
+                      }
                     },
                   ),
                 ],

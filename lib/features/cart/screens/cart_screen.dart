@@ -14,11 +14,11 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  void navigateToAddress(int sum) {
+  void navigateToAddress(double sum) {
     Navigator.pushNamed(
       context,
       AddressScreen.routeName,
-      arguments: sum.toString(),
+      arguments: sum.toStringAsFixed(2),
     );
   }
 
@@ -29,14 +29,24 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>().user;
-    int sum = 0;
-    user.cart
-        .map((e) => sum += e['quantity'] * e['product']['price'] as int)
-        .toList();
+
+    double sum = 0;
+    bool hasInvalidQuantity = false;
+
+    for (var e in user.cart) {
+      final quantity = e['quantity'];
+      final product = e['product'];
+      sum += quantity * product['price'];
+
+      if (quantity > product['quantity']) {
+        hasInvalidQuantity = true;
+      }
+    }
 
     final bool isCartEmpty = user.cart.isEmpty;
     final bool hasAddress = user.address.trim().isNotEmpty;
-    final bool isProceedEnabled = !isCartEmpty && hasAddress;
+    final bool isProceedEnabled =
+        !isCartEmpty && hasAddress && !hasInvalidQuantity;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -64,7 +74,7 @@ class _CartScreenState extends State<CartScreen> {
                 children: [
                   const Text('Subtotal ', style: TextStyle(fontSize: 18)),
                   Text(
-                    '\$$sum',
+                    '\$${sum.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -88,6 +98,14 @@ class _CartScreenState extends State<CartScreen> {
                   padding: EdgeInsets.only(bottom: 8.0),
                   child: Text(
                     '📬 Please save a shipping address before proceeding.',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                )
+              else if (hasInvalidQuantity)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    '⚠️ Some items exceed available stock. Please adjust quantities.',
                     style: TextStyle(color: Colors.redAccent),
                   ),
                 ),

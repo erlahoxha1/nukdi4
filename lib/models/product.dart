@@ -9,8 +9,12 @@ class Product {
   final List<String> images;
   final String category;
   final double price;
+  final String carBrand;
+  final String carModel;
+  final String carYear;
   final String? id;
   final List<Rating>? rating;
+
   Product({
     required this.name,
     required this.description,
@@ -18,6 +22,9 @@ class Product {
     required this.images,
     required this.category,
     required this.price,
+    required this.carBrand,
+    required this.carModel,
+    required this.carYear,
     this.id,
     this.rating,
   });
@@ -30,8 +37,11 @@ class Product {
       'images': images,
       'category': category,
       'price': price,
+      'carBrand': carBrand,
+      'carModel': carModel,
+      'carYear': carYear,
       'id': id,
-      'rating': rating,
+      'ratings': rating?.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -43,14 +53,14 @@ class Product {
       images: List<String>.from(map['images']),
       category: map['category'] ?? '',
       price: map['price']?.toDouble() ?? 0.0,
+      carBrand: map['carBrand'] ?? '',
+      carModel: map['carModel'] ?? '',
+      carYear: map['carYear'] ?? '',
       id: map['_id'],
-      rating: map['ratings'] != null
-          ? List<Rating>.from(
-              map['ratings']?.map(
-                (x) => Rating.fromMap(x),
-              ),
-            )
-          : null,
+      rating:
+          map['ratings'] != null
+              ? List<Rating>.from(map['ratings']?.map((x) => Rating.fromMap(x)))
+              : null,
     );
   }
 

@@ -1,23 +1,15 @@
-import 'package:nukdi4/common/widgets/custom_button.dart';
-import 'package:nukdi4/common/widgets/stars.dart';
-import 'package:nukdi4/features/product_details/services/product_details_services.dart';
-import 'package:nukdi4/provider/user_provider.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-
 import 'package:nukdi4/constants/global_variables.dart';
-import 'package:nukdi4/features/search/screens/search_screen.dart';
+import 'package:nukdi4/features/product_details/services/product_details_services.dart';
 import 'package:nukdi4/models/product.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:provider/provider.dart';
+import 'package:nukdi4/constants/utils.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   static const String routeName = '/product-details';
   final Product product;
-  const ProductDetailScreen({
-    Key? key,
-    required this.product,
-  }) : super(key: key);
+
+  const ProductDetailScreen({Key? key, required this.product})
+    : super(key: key);
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
@@ -26,244 +18,207 @@ class ProductDetailScreen extends StatefulWidget {
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
   final ProductDetailsServices productDetailsServices =
       ProductDetailsServices();
-  double avgRating = 0;
-  double myRating = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    double totalRating = 0;
-    for (int i = 0; i < widget.product.rating!.length; i++) {
-      totalRating += widget.product.rating![i].rating;
-      if (widget.product.rating![i].userId ==
-          Provider.of<UserProvider>(context, listen: false).user.id) {
-        myRating = widget.product.rating![i].rating;
-      }
-    }
-
-    if (totalRating != 0) {
-      avgRating = totalRating / widget.product.rating!.length;
-    }
-  }
-
-  void navigateToSearchScreen(String query) {
-    Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
-  }
+  int userQuantity = 1;
 
   void addToCart() {
-    productDetailsServices.addToCart(
-      context: context,
-      product: widget.product,
-    );
+    print('📦 DEBUG: Add to Cart pressed');
+    print('Product Name: ${widget.product.name}');
+    print('carBrand: ${widget.product.carBrand}');
+    print('carModel: ${widget.product.carModel}');
+    print('carYear: ${widget.product.carYear}');
+
+    if (userQuantity <= widget.product.quantity) {
+      if (widget.product.carBrand.isEmpty ||
+          widget.product.carModel.isEmpty ||
+          widget.product.carYear.isEmpty) {
+        showSnackBar(context, 'Error: Product is missing car information.');
+        return;
+      }
+
+      productDetailsServices.addToCart(
+        context: context,
+        product: widget.product,
+        quantity: userQuantity,
+      );
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Added to Cart'),
+            content: const Text(
+              'Do you want to go to your cart or continue shopping?',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Continue Shopping'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pushNamed(context, '/cart');
+                },
+                child: const Text('Go to Cart'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Cannot add more than stock available')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: GlobalVariables.selectedNavBarColor,
+        title: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.lightBlueAccent),
+              onPressed: () => Navigator.pop(context),
+              style: IconButton.styleFrom(
+                backgroundColor: Colors.white,
+                shape: const CircleBorder(),
+              ),
             ),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 42,
-                  margin: const EdgeInsets.only(left: 15),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(7),
-                    elevation: 1,
-                    child: TextFormField(
-                      onFieldSubmitted: navigateToSearchScreen,
-                      decoration: InputDecoration(
-                        prefixIcon: InkWell(
-                          onTap: () {},
-                          child: const Padding(
-                            padding: EdgeInsets.only(
-                              left: 6,
-                            ),
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.black,
-                              size: 23,
-                            ),
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.only(top: 10),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(7),
-                          ),
-                          borderSide: BorderSide(
-                            color: Colors.black38,
-                            width: 1,
-                          ),
-                        ),
-                        hintText: 'Search Amazon.in',
-                        hintStyle: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                  ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                widget.product.name,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
-              Container(
-                color: Colors.transparent,
-                height: 42,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Icon(Icons.mic, color: Colors.black, size: 25),
-              ),
-            ],
-          ),
+            ),
+            const Icon(Icons.favorite_border, color: Colors.white),
+          ],
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    widget.product.id!,
-                  ),
-                  Stars(
-                    rating: avgRating,
-                  ),
-                ],
-              ),
+            Image.network(
+              widget.product.images[0],
+              height: 250,
+              fit: BoxFit.contain,
             ),
+            const SizedBox(height: 20),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-                horizontal: 10,
-              ),
-              child: Text(
-                widget.product.name,
-                style: const TextStyle(
-                  fontSize: 15,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-              ),
-            ),
-            CarouselSlider(
-              items: widget.product.images.map(
-                (i) {
-                  return Builder(
-                    builder: (BuildContext context) => Image.network(
-                      i,
-                      fit: BoxFit.contain,
-                      height: 200,
-                    ),
-                  );
-                },
-              ).toList(),
-              options: CarouselOptions(
-                viewportFraction: 1,
-                height: 300,
-              ),
-            ),
-            Container(
-              color: Colors.black12,
-              height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: RichText(
-                text: TextSpan(
-                  text: 'Deal Price: ',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextSpan(
-                      text: '\$${widget.product.price}',
+                    Text(
+                      widget.product.name,
                       style: const TextStyle(
+                        fontWeight: FontWeight.bold,
                         fontSize: 22,
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
                       ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      widget.product.description,
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        const Text("Quantity:", style: TextStyle(fontSize: 16)),
+                        const SizedBox(width: 10),
+                        IconButton(
+                          icon: const Icon(Icons.remove),
+                          onPressed: () {
+                            if (userQuantity > 1) {
+                              setState(() {
+                                userQuantity--;
+                              });
+                            }
+                          },
+                        ),
+                        Text(
+                          '$userQuantity',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.add),
+                          onPressed: () {
+                            if (userQuantity < widget.product.quantity) {
+                              setState(() {
+                                userQuantity++;
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('No stock available'),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                        const Spacer(),
+                        Text(
+                          '${widget.product.quantity} in stock',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Text(
+                          '\$${widget.product.price.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                GlobalVariables.selectedNavBarColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 12,
+                            ),
+                          ),
+                          onPressed: addToCart,
+                          child: const Text(
+                            'Add to Cart',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(widget.product.description),
-            ),
-            Container(
-              color: Colors.black12,
-              height: 5,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: CustomButton(
-                text: 'Buy Now',
-                onTap: () {},
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: CustomButton(
-                text: 'Add to Cart',
-                onTap: addToCart,
-                color: const Color.fromRGBO(254, 216, 19, 1),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Container(
-              color: Colors.black12,
-              height: 5,
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10.0),
-              child: Text(
-                'Rate The Product',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            RatingBar.builder(
-              initialRating: myRating,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              itemCount: 5,
-              itemPadding: const EdgeInsets.symmetric(horizontal: 4),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: GlobalVariables.secondaryColor,
-              ),
-              onRatingUpdate: (rating) {
-                productDetailsServices.rateProduct(
-                  context: context,
-                  product: widget.product,
-                  rating: rating,
-                );
-              },
-            )
           ],
         ),
       ),

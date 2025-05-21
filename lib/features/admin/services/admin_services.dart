@@ -12,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
-
 class AdminServices {
   void sellProduct({
     required BuildContext context,
@@ -22,6 +21,9 @@ class AdminServices {
     required double quantity,
     required String category,
     required List<File> images,
+    required String carBrand,
+    required String carModel,
+    required String carYear,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
@@ -36,14 +38,17 @@ class AdminServices {
         imageUrls.add(res.secureUrl);
       }
 
-      Product product = Product(
-        name: name,
-        description: description,
-        quantity: quantity,
-        images: imageUrls,
-        category: category,
-        price: price,
-      );
+      final Map<String, dynamic> productData = {
+        'name': name,
+        'description': description,
+        'price': price,
+        'quantity': quantity,
+        'category': category,
+        'images': imageUrls,
+        'carBrand': carBrand,
+        'carModel': carModel,
+        'carYear': carYear,
+      };
 
       http.Response res = await http.post(
         Uri.parse('$uri/admin/add-product'),
@@ -51,7 +56,7 @@ class AdminServices {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: product.toJson(),
+        body: jsonEncode(productData),
       );
 
       httpErrorHandle(
@@ -67,16 +72,17 @@ class AdminServices {
     }
   }
 
-  // get all the products
   Future<List<Product>> fetchAllProducts(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     List<Product> productList = [];
     try {
-      http.Response res =
-          await http.get(Uri.parse('$uri/admin/get-products'), headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': userProvider.user.token,
-      });
+      http.Response res = await http.get(
+        Uri.parse('$uri/admin/get-products'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+      );
 
       httpErrorHandle(
         response: res,
@@ -84,11 +90,7 @@ class AdminServices {
         onSuccess: () {
           for (int i = 0; i < jsonDecode(res.body).length; i++) {
             productList.add(
-              Product.fromJson(
-                jsonEncode(
-                  jsonDecode(res.body)[i],
-                ),
-              ),
+              Product.fromJson(jsonEncode(jsonDecode(res.body)[i])),
             );
           }
         },
@@ -113,9 +115,7 @@ class AdminServices {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: jsonEncode({
-          'id': product.id,
-        }),
+        body: jsonEncode({'id': product.id}),
       );
 
       httpErrorHandle(
@@ -134,24 +134,20 @@ class AdminServices {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     List<Order> orderList = [];
     try {
-      http.Response res =
-          await http.get(Uri.parse('$uri/admin/get-orders'), headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': userProvider.user.token,
-      });
+      http.Response res = await http.get(
+        Uri.parse('$uri/admin/get-orders'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+      );
 
       httpErrorHandle(
         response: res,
         context: context,
         onSuccess: () {
           for (int i = 0; i < jsonDecode(res.body).length; i++) {
-            orderList.add(
-              Order.fromJson(
-                jsonEncode(
-                  jsonDecode(res.body)[i],
-                ),
-              ),
-            );
+            orderList.add(Order.fromJson(jsonEncode(jsonDecode(res.body)[i])));
           }
         },
       );
@@ -176,17 +172,10 @@ class AdminServices {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: jsonEncode({
-          'id': order.id,
-          'status': status,
-        }),
+        body: jsonEncode({'id': order.id, 'status': status}),
       );
 
-      httpErrorHandle(
-        response: res,
-        context: context,
-        onSuccess: onSuccess,
-      );
+      httpErrorHandle(response: res, context: context, onSuccess: onSuccess);
     } catch (e) {
       showSnackBar(context, e.toString());
     }
@@ -197,11 +186,13 @@ class AdminServices {
     List<Sales> sales = [];
     int totalEarning = 0;
     try {
-      http.Response res =
-          await http.get(Uri.parse('$uri/admin/analytics'), headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': userProvider.user.token,
-      });
+      http.Response res = await http.get(
+        Uri.parse('$uri/admin/analytics'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+      );
 
       httpErrorHandle(
         response: res,
@@ -221,9 +212,6 @@ class AdminServices {
     } catch (e) {
       showSnackBar(context, e.toString());
     }
-    return {
-      'sales': sales,
-      'totalEarnings': totalEarning,
-    };
+    return {'sales': sales, 'totalEarnings': totalEarning};
   }
 }

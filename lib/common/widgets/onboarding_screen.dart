@@ -11,121 +11,117 @@ class OnboardingScreen extends StatelessWidget {
       body: SafeArea(
         child: Stack(
           children: [
-            // 🔵 Background blue circle (positioned on the right)
+            // Background circle
             Positioned(
-              bottom: 120,
+              bottom: 100,
               right: -100,
               child: Container(
-                height: 320,
-                width: 320,
+                height: 300,
+                width: 300,
                 decoration: const BoxDecoration(
                   color: Colors.lightBlueAccent,
                   shape: BoxShape.circle,
                 ),
               ),
             ),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 20),
 
-                      // 🔧 Tagline
-                      const Text(
-                        "🔧 AUTOSPARKS",
+            // Main content
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 40),
+
+                  // 🚨 MAIN BRANDING: AUTOSPARKS
+                  const Text(
+                    "AUTOSPARKS",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      color: Colors.black,
+                    ),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // 🏷️ Hero Title
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: const TextSpan(
+                      style: TextStyle(fontSize: 26, color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: 'Get the ',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        TextSpan(
+                          text: 'best\n',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.lightBlue,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'parts for your car.',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  const Text(
+                    "Search thousands of parts that fit your car's needs.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14.5, color: Colors.black54),
+                  ),
+
+                  const SizedBox(height: 30),
+
+                  // 🚘 Car Image
+                  Image.asset(
+                    'assets/images/car.png',
+                    height: 240,
+                    fit: BoxFit.contain,
+                  ),
+
+                  const Spacer(),
+
+                  // CTA Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AuthScreen()),
+                        );
+                      },
+                      child: const Text(
+                        "Start Exploring →",
                         style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 1.2,
+                          fontSize: 17,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-
-                      const SizedBox(height: 8),
-
-                      // 🏷️ Title
-                      RichText(
-                        text: const TextSpan(
-                          style: TextStyle(fontSize: 28, color: Colors.black),
-                          children: [
-                            TextSpan(
-                              text: 'Get the ',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: 'best\n',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.lightBlue,
-                              ),
-                            ),
-                            TextSpan(
-                              text: 'parts for you.',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      const Text(
-                        "Search hundreds and thousands of parts that best fit you.",
-                        style: TextStyle(fontSize: 14.5, color: Colors.black54),
-                      ),
-
-                      const SizedBox(height: 20),
-
-                      // 🚗 Car image: bigger and snapped off right
-                      Transform.translate(
-                        offset: const Offset(80, 0), // Shift to the right
-                        child: Image.asset(
-                          'assets/images/car.png',
-                          height: 330, // Bigger height
-                          width: 430, // Bigger width
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-
-                      const Spacer(),
-
-                      // 🔘 Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const AuthScreen(),
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            "Start Exploring →",
-                            style: TextStyle(fontSize: 17, color: Colors.white),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-                    ],
+                    ),
                   ),
-                );
-              },
+
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ],
         ),

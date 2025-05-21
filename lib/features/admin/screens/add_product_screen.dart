@@ -1,7 +1,4 @@
 import 'dart:io';
-
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:nukdi4/common/widgets/custom_button.dart';
 import 'package:nukdi4/constants/global_variables.dart';
@@ -21,25 +18,36 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  final TextEditingController quantityController =
-      TextEditingController(); // ✅ fixed spelling
-  final AdminServices adminServices = AdminServices();
+  final TextEditingController quantityController = TextEditingController();
+  final TextEditingController carBrandController = TextEditingController();
+  final TextEditingController carModelController = TextEditingController();
+  final TextEditingController carYearController = TextEditingController();
 
-  String category = 'cat1';
+  final AdminServices adminServices = AdminServices();
+  final _addProductFormKey = GlobalKey<FormState>();
+
+  String category = 'Controller';
   List<File> images = [];
 
-  final _addProductFormKey = GlobalKey<FormState>();
+  List<String> productCategories = [
+    'Controller',
+    'EV Charger',
+    'Motor',
+    'Charger',
+    'Battery',
+  ];
 
   @override
   void dispose() {
     productNameController.dispose();
     descriptionController.dispose();
     priceController.dispose();
-    quantityController.dispose(); // ✅ fixed spelling
+    quantityController.dispose();
+    carBrandController.dispose();
+    carModelController.dispose();
+    carYearController.dispose();
     super.dispose();
   }
-
-  List<String> productCategories = ['cat1', 'cat2', 'cat3', 'cat4'];
 
   void sellProduct() {
     if (_addProductFormKey.currentState!.validate() && images.isNotEmpty) {
@@ -48,9 +56,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
         name: productNameController.text,
         description: descriptionController.text,
         price: double.parse(priceController.text),
-        quantity: double.parse(quantityController.text), // ✅ no more error
+        quantity: double.parse(quantityController.text),
         category: category,
         images: images,
+        carBrand: carBrandController.text,
+        carModel: carModelController.text,
+        carYear: carYearController.text,
       );
     } else {
       showSnackBar(context, 'Please fill all fields and add images');
@@ -60,7 +71,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void selectImages() async {
     var res = await pickImages();
     setState(() {
-      images = res;
+      images.addAll(res); // Append selected images
     });
   }
 
@@ -89,71 +100,119 @@ class _AddProductScreenState extends State<AddProductScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                images.isNotEmpty
-                    ? CarouselSlider(
-                      items:
-                          images.map((i) {
-                            return Builder(
-                              builder:
-                                  (BuildContext context) => Image.file(
-                                    i,
-                                    fit: BoxFit.cover,
-                                    height: 200,
-                                  ),
-                            );
-                          }).toList(),
-                      options: CarouselOptions(
-                        viewportFraction: 1,
-                        height: 200,
-                      ),
-                    )
-                    : GestureDetector(
-                      onTap: selectImages,
-                      child: DottedBorder(
-                        borderType: BorderType.RRect,
-                        radius: const Radius.circular(10),
-                        dashPattern: const [10, 4],
-                        strokeCap: StrokeCap.round,
-                        child: Container(
-                          width: double.infinity,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Icons.folder_open, size: 40),
-                              const SizedBox(height: 15),
-                              Text(
-                                'Select Product Images',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey[400],
-                                ),
-                              ),
-                            ],
-                          ),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    ...images.map(
+                      (file) => ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.file(
+                          file,
+                          width: 100,
+                          height: 100,
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
+                    GestureDetector(
+                      onTap: selectImages,
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.add, size: 30),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 CustomTextField(
                   controller: productNameController,
                   hintText: 'Product Name',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the product name';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   controller: descriptionController,
-                  hintText: 'Description ',
+                  hintText: 'Description',
                   maxLines: 5,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the description';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 10),
-                CustomTextField(controller: priceController, hintText: 'Price'),
+                CustomTextField(
+                  controller: priceController,
+                  hintText: 'Price',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the price';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Price must be a number';
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   controller: quantityController,
-                  hintText: 'Quantity ',
+                  hintText: 'Quantity',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the quantity';
+                    }
+                    if (double.tryParse(value) == null) {
+                      return 'Quantity must be a number';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  controller: carBrandController,
+                  hintText: 'Car Brand',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the car brand';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  controller: carModelController,
+                  hintText: 'Car Model',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the car model';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  controller: carYearController,
+                  hintText: 'Car Year',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the car year';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 10),
                 SizedBox(
@@ -161,13 +220,12 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   child: DropdownButton(
                     value: category,
                     icon: const Icon(Icons.keyboard_arrow_down),
-                    items:
-                        productCategories.map((String items) {
-                          return DropdownMenuItem(
-                            value: items,
-                            child: Text(items),
-                          );
-                        }).toList(),
+                    items: productCategories.map((String item) {
+                      return DropdownMenuItem(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
                     onChanged: (String? newVal) {
                       setState(() {
                         category = newVal!;
@@ -176,10 +234,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                CustomButton(
-                  text: 'Sell',
-                  onTap: sellProduct, // ✅ works now
-                ),
+                CustomButton(text: 'Sell', onTap: sellProduct),
               ],
             ),
           ),

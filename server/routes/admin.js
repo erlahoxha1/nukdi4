@@ -3,28 +3,63 @@ const adminRouter = express.Router();
 const admin = require("../middlewares/admin");
 const { Product } = require("../models/product");
 const Order = require("../models/order");
-const { PromiseProvider } = require("mongoose");
+const { body, validationResult } = require("express-validator"); // ✅ Added for validation
 
-// Add product
-adminRouter.post("/admin/add-product", admin, async (req, res) => {
-  try {
-    const { name, description, images, quantity, price, category } = req.body;
-    let product = new Product({
-      name,
-      description,
-      images,
-      quantity,
-      price,
-      category,
-    });
-    product = await product.save();
-    res.json(product);
-  } catch (e) {
-    res.status(500).json({ error: e.message });
+// ✅ Add product with validation
+adminRouter.post(
+  "/admin/add-product",
+  admin,
+  [
+    body("name").notEmpty().withMessage("Product name is required"),
+    body("description").notEmpty().withMessage("Description is required"),
+    body("images").isArray({ min: 1 }).withMessage("At least one image is required"),
+    body("quantity").isFloat({ gt: 0 }).withMessage("Quantity must be greater than 0"),
+    body("price").isFloat({ gt: 0 }).withMessage("Price must be greater than 0"),
+    body("category").notEmpty().withMessage("Category is required"),
+    body("carBrand").notEmpty().withMessage("Car brand is required"),
+    body("carModel").notEmpty().withMessage("Car model is required"),
+    body("carYear").notEmpty().withMessage("Car year is required"),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const {
+        name,
+        description,
+        images,
+        quantity,
+        price,
+        category,
+        carBrand,
+        carModel,
+        carYear,
+      } = req.body;
+
+      let product = new Product({
+        name,
+        description,
+        images,
+        quantity,
+        price,
+        category,
+        carBrand,
+        carModel,
+        carYear,
+      });
+
+      product = await product.save();
+      res.json(product);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
   }
-});
+);
 
-// Get all your products
+// ✅ Get all your products
 adminRouter.get("/admin/get-products", admin, async (req, res) => {
   try {
     const products = await Product.find({});
@@ -34,7 +69,7 @@ adminRouter.get("/admin/get-products", admin, async (req, res) => {
   }
 });
 
-// Delete the product
+// ✅ Delete the product
 adminRouter.post("/admin/delete-product", admin, async (req, res) => {
   try {
     const { id } = req.body;
@@ -45,6 +80,7 @@ adminRouter.post("/admin/delete-product", admin, async (req, res) => {
   }
 });
 
+// ✅ Get all orders
 adminRouter.get("/admin/get-orders", admin, async (req, res) => {
   try {
     const orders = await Order.find({});
@@ -54,6 +90,7 @@ adminRouter.get("/admin/get-orders", admin, async (req, res) => {
   }
 });
 
+// ✅ Change order status
 adminRouter.post("/admin/change-order-status", admin, async (req, res) => {
   try {
     const { id, status } = req.body;
@@ -66,6 +103,7 @@ adminRouter.post("/admin/change-order-status", admin, async (req, res) => {
   }
 });
 
+// ✅ Analytics
 adminRouter.get("/admin/analytics", admin, async (req, res) => {
   try {
     const orders = await Order.find({});
@@ -74,23 +112,24 @@ adminRouter.get("/admin/analytics", admin, async (req, res) => {
     for (let i = 0; i < orders.length; i++) {
       for (let j = 0; j < orders[i].products.length; j++) {
         totalEarnings +=
-          orders[i].products[j].quantity * orders[i].products[j].product.price;
+          orders[i].products[j].quantity *
+          orders[i].products[j].product.price;
       }
     }
-    // CATEGORY WISE ORDER FETCHING
-    let mobileEarnings = await fetchCategoryWiseProduct("Mobiles");
-    let essentialEarnings = await fetchCategoryWiseProduct("Essentials");
-    let applianceEarnings = await fetchCategoryWiseProduct("Appliances");
-    let booksEarnings = await fetchCategoryWiseProduct("Books");
-    let fashionEarnings = await fetchCategoryWiseProduct("Fashion");
+
+    let controllerEarnings = await fetchCategoryWiseProduct("Controller");
+    let evChargerEarnings = await fetchCategoryWiseProduct("EV Charger");
+    let motorEarnings = await fetchCategoryWiseProduct("Motor");
+    let chargerEarnings = await fetchCategoryWiseProduct("Charger");
+    let batteryEarnings = await fetchCategoryWiseProduct("Battery");
 
     let earnings = {
       totalEarnings,
-      mobileEarnings,
-      essentialEarnings,
-      applianceEarnings,
-      booksEarnings,
-      fashionEarnings,
+      controllerEarnings,
+      evChargerEarnings,
+      motorEarnings,
+      chargerEarnings,
+      batteryEarnings,
     };
 
     res.json(earnings);
