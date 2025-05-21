@@ -5,31 +5,23 @@ const Order = require("../models/order");
 const { Product } = require("../models/product");
 const User = require("../models/user");
 
+// ✅ FIXED: Add to cart with correct quantity
 userRouter.post("/api/add-to-cart", auth, async (req, res) => {
   try {
-    const { id } = req.body;
+    const { id, quantity } = req.body;
     const product = await Product.findById(id);
     let user = await User.findById(req.user);
 
-    if (user.cart.length == 0) {
-      user.cart.push({ product, quantity: 1 });
-    } else {
-      let isProductFound = false;
-      for (let i = 0; i < user.cart.length; i++) {
-        if (user.cart[i].product._id.equals(product._id)) {
-          isProductFound = true;
-        }
-      }
+    const existingItemIndex = user.cart.findIndex((item) =>
+      item.product._id.equals(product._id)
+    );
 
-      if (isProductFound) {
-        let producttt = user.cart.find((productt) =>
-          productt.product._id.equals(product._id)
-        );
-        producttt.quantity += 1;
-      } else {
-        user.cart.push({ product, quantity: 1 });
-      }
+    if (existingItemIndex >= 0) {
+      user.cart[existingItemIndex].quantity += quantity;
+    } else {
+      user.cart.push({ product, quantity });
     }
+
     user = await user.save();
     res.json(user);
   } catch (e) {
@@ -59,7 +51,7 @@ userRouter.delete("/api/remove-from-cart/:id", auth, async (req, res) => {
   }
 });
 
-// save user address
+// Save user address
 userRouter.post("/api/save-user-address", auth, async (req, res) => {
   try {
     const { address } = req.body;
@@ -72,7 +64,7 @@ userRouter.post("/api/save-user-address", auth, async (req, res) => {
   }
 });
 
-// order product
+// Order product
 userRouter.post("/api/order", auth, async (req, res) => {
   try {
     const { cart, totalPrice, address } = req.body;
@@ -109,6 +101,7 @@ userRouter.post("/api/order", auth, async (req, res) => {
   }
 });
 
+// Get user orders
 userRouter.get("/api/orders/me", auth, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user });
