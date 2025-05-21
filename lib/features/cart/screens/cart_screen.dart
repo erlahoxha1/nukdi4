@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:nukdi4/common/widgets/custom_button.dart';
 import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/features/address/screens/address_screen.dart';
 import 'package:nukdi4/features/cart/widgets/cart_product.dart';
-import 'package:nukdi4/common/widgets/bottom_bar.dart'; // ✅ Use BottomBar, not HomeScreen
+import 'package:nukdi4/common/widgets/bottom_bar.dart';
 import 'package:nukdi4/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +23,6 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   void goBackToShopping() {
-    // ✅ This will restore the bottom bar and navigate to home tab
     Navigator.pushReplacementNamed(context, BottomBar.routeName);
   }
 
@@ -35,6 +33,10 @@ class _CartScreenState extends State<CartScreen> {
     user.cart
         .map((e) => sum += e['quantity'] * e['product']['price'] as int)
         .toList();
+
+    final bool isCartEmpty = user.cart.isEmpty;
+    final bool hasAddress = user.address.trim().isNotEmpty;
+    final bool isProceedEnabled = !isCartEmpty && hasAddress;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -57,7 +59,7 @@ class _CartScreenState extends State<CartScreen> {
               _buildStepperBar(),
               const SizedBox(height: 20),
 
-              // Subtotal + Proceed button
+              // Subtotal
               Row(
                 children: [
                   const Text('Subtotal ', style: TextStyle(fontSize: 18)),
@@ -71,30 +73,53 @@ class _CartScreenState extends State<CartScreen> {
                 ],
               ),
               const SizedBox(height: 12),
+
+              // ❗ Explanation if disabled
+              if (isCartEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    '🛒 Your cart is empty. Add items to continue.',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                )
+              else if (!hasAddress)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    '📬 Please save a shipping address before proceeding.',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                ),
+
+              // ✅ Proceed button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 18),
-                    backgroundColor: Colors.blue,
+                    backgroundColor:
+                        isProceedEnabled ? Colors.blue : Colors.grey,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  onPressed: () => navigateToAddress(sum),
+                  onPressed:
+                      isProceedEnabled ? () => navigateToAddress(sum) : null,
                   child: Text(
                     'Proceed to Buy (${user.cart.length} items)',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 18,
-                      color: Colors.white,
+                      color: isProceedEnabled ? Colors.white : Colors.black54,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
               ),
 
-              // Cart items
               const SizedBox(height: 20),
+
+              // Cart items
               ListView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -104,8 +129,8 @@ class _CartScreenState extends State<CartScreen> {
                 },
               ),
 
-              // Go Back to Shopping
               const SizedBox(height: 20),
+
               OutlinedButton.icon(
                 onPressed: goBackToShopping,
                 icon: const Icon(Icons.arrow_back),
