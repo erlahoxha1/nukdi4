@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nukdi4/features/home/screens/category_products_screen.dart';
+import 'package:nukdi4/features/search/screens/filterscreen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
@@ -14,6 +15,21 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => CategoryProductsScreen(category: name)),
+    );
+  }
+
+  void navigateToFilter() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder:
+            (_) => FilterScreen(
+              onApply: (filteredProducts) {
+                // Handle filtered results if needed
+                print('Filtered products: ${filteredProducts.length}');
+              },
+            ),
+      ),
     );
   }
 
@@ -39,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
             bottom: 10,
           ),
           decoration: const BoxDecoration(
-            color: Color(0xFF1976D2), // blue header
+            color: Color(0xFF1976D2),
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(20),
               bottomRight: Radius.circular(20),
@@ -70,7 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           },
                         ),
                       ),
-                      const Icon(Icons.filter_alt_outlined, color: Colors.grey),
                     ],
                   ),
                 ),
@@ -84,9 +99,22 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Product Categories",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            // 🔹 Updated: "Product Categories" with filter icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  "Product Categories",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.filter_alt_outlined,
+                    color: Colors.grey,
+                  ),
+                  onPressed: navigateToFilter,
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             Expanded(

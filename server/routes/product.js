@@ -3,6 +3,7 @@ const productRouter = express.Router();
 const auth = require("../middlewares/auth");
 const { Product } = require("../models/product");
 
+// 🔹 Get products by category
 productRouter.get("/api/products/", auth, async (req, res) => {
   try {
     const products = await Product.find({ category: req.query.category });
@@ -12,8 +13,7 @@ productRouter.get("/api/products/", auth, async (req, res) => {
   }
 });
 
-// create a get request to search products and get them
-// /api/products/search/i
+// 🔹 Search products by name
 productRouter.get("/api/products/search/:name", auth, async (req, res) => {
   try {
     const products = await Product.find({
@@ -26,7 +26,7 @@ productRouter.get("/api/products/search/:name", auth, async (req, res) => {
   }
 });
 
-// create a post request route to rate the product.
+// 🔹 Rate a product
 productRouter.post("/api/rate-product", auth, async (req, res) => {
   try {
     const { id, rating } = req.body;
@@ -52,6 +52,7 @@ productRouter.post("/api/rate-product", auth, async (req, res) => {
   }
 });
 
+// 🔹 Deal of the day
 productRouter.get("/api/deal-of-day", auth, async (req, res) => {
   try {
     let products = await Product.find({});
@@ -71,6 +72,23 @@ productRouter.get("/api/deal-of-day", auth, async (req, res) => {
     });
 
     res.json(products[0]);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// 🔹 NEW: Filter products by brand, model, and year
+productRouter.get("/api/products/filter", auth, async (req, res) => {
+  try {
+    const { brand, model, year } = req.query;
+
+    let filter = {};
+    if (brand) filter["carBrand"] = brand;
+    if (model) filter["carModel"] = model;
+    if (year) filter["carYear"] = year;
+
+    const products = await Product.find(filter);
+    res.json(products);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
