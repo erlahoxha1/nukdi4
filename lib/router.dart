@@ -5,7 +5,6 @@ import 'package:nukdi4/features/account/screens/add_address_screen.dart';
 import 'package:nukdi4/features/admin/screens/add_product_screen.dart';
 import 'package:nukdi4/features/admin/screens/admin_screen.dart';
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
-import 'package:nukdi4/features/home/screens/category_deals_screen.dart';
 import 'package:nukdi4/features/home/screens/home_screen.dart';
 import 'package:nukdi4/features/order_details/screens/order_details.dart';
 import 'package:nukdi4/features/payment/paypal_payment_screen.dart';
@@ -47,12 +46,6 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const AddProductScreen(),
       );
 
-    case CategoryDealsScreen.routeName:
-      var category = routeSettings.arguments as String;
-      return MaterialPageRoute(
-        settings: routeSettings,
-        builder: (_) => CategoryDealsScreen(category: category),
-      );
 
     case SearchScreen.routeName:
       var searchQuery = routeSettings.arguments as String;

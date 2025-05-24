@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:nukdi4/models/rating.dart';
 
 class Product {
@@ -7,7 +6,8 @@ class Product {
   final String description;
   final double quantity;
   final List<String> images;
-  final String category;
+  final String categoryId;
+  final String categoryName;
   final double price;
   final String carBrand;
   final String carModel;
@@ -20,7 +20,8 @@ class Product {
     required this.description,
     required this.quantity,
     required this.images,
-    required this.category,
+    required this.categoryId,
+    required this.categoryName,
     required this.price,
     required this.carBrand,
     required this.carModel,
@@ -35,7 +36,8 @@ class Product {
       'description': description,
       'quantity': quantity,
       'images': images,
-      'category': category,
+      'categoryId': categoryId,
+      'categoryName': categoryName,
       'price': price,
       'carBrand': carBrand,
       'carModel': carModel,
@@ -51,21 +53,19 @@ class Product {
       description: map['description'] ?? '',
       quantity: map['quantity']?.toDouble() ?? 0.0,
       images: List<String>.from(map['images']),
-      category: map['category'] ?? '',
+      categoryId: map['categoryId'] ?? '',
+      categoryName: map['categoryName'] ?? '',
       price: map['price']?.toDouble() ?? 0.0,
       carBrand: map['carBrand'] ?? '',
       carModel: map['carModel'] ?? '',
       carYear: map['carYear'] ?? '',
       id: map['_id'],
-      rating:
-          map['ratings'] != null
-              ? List<Rating>.from(map['ratings']?.map((x) => Rating.fromMap(x)))
-              : null,
+      rating: map['ratings'] != null
+          ? List<Rating>.from(map['ratings']?.map((x) => Rating.fromMap(x)))
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
-
-  factory Product.fromJson(String source) =>
-      Product.fromMap(json.decode(source));
+  factory Product.fromJson(String source) => Product.fromMap(json.decode(source));
 }

@@ -5,6 +5,8 @@ import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/common/widgets/custom_textfield.dart';
 import 'package:nukdi4/constants/utils.dart';
 import 'package:nukdi4/features/admin/services/admin_services.dart';
+import 'package:nukdi4/features/home/services/category_services.dart';
+import 'package:nukdi4/models/category.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const String routeName = '/add-product';
@@ -24,18 +26,33 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final TextEditingController carYearController = TextEditingController();
 
   final AdminServices adminServices = AdminServices();
+  final CategoryService categoryService = CategoryService();
   final _addProductFormKey = GlobalKey<FormState>();
 
-  String category = 'Controller';
+  List<Category> categories = [];
+  String? selectedCategoryId;
+  String? selectedCategoryName;
+  bool loadingCategories = true;
+
   List<File> images = [];
 
-  List<String> productCategories = [
-    'Controller',
-    'EV Charger',
-    'Motor',
-    'Charger',
-    'Battery',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final cats = await categoryService.fetchAll();
+    setState(() {
+      categories = cats;
+      if (categories.isNotEmpty) {
+        selectedCategoryId = categories.first.id;
+        selectedCategoryName = categories.first.name;
+      }
+      loadingCategories = false;
+    });
+  }
 
   @override
   void dispose() {
@@ -50,28 +67,34 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   void sellProduct() {
-    if (_addProductFormKey.currentState!.validate() && images.isNotEmpty) {
+    if (_addProductFormKey.currentState!.validate() &&
+        images.isNotEmpty &&
+        selectedCategoryId != null) {
       adminServices.sellProduct(
         context: context,
         name: productNameController.text,
         description: descriptionController.text,
         price: double.parse(priceController.text),
         quantity: double.parse(quantityController.text),
-        category: category,
+        categoryId: selectedCategoryId!,
+        categoryName: selectedCategoryName!, // ✅ ADD THIS
         images: images,
         carBrand: carBrandController.text,
         carModel: carModelController.text,
         carYear: carYearController.text,
       );
     } else {
-      showSnackBar(context, 'Please fill all fields and add images');
+      showSnackBar(
+        context,
+        'Please fill all fields, select category, and add images',
+      );
     }
   }
 
   void selectImages() async {
     var res = await pickImages();
     setState(() {
-      images.addAll(res); // Append selected images
+      images.addAll(res);
     });
   }
 
@@ -134,36 +157,32 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 CustomTextField(
                   controller: productNameController,
                   hintText: 'Product Name',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the product name';
-                    }
-                    return null;
-                  },
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please enter the product name'
+                              : null,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   controller: descriptionController,
                   hintText: 'Description',
                   maxLines: 5,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the description';
-                    }
-                    return null;
-                  },
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please enter the description'
+                              : null,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   controller: priceController,
                   hintText: 'Price',
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.isEmpty)
                       return 'Please enter the price';
-                    }
-                    if (double.tryParse(value) == null) {
+                    if (double.tryParse(value) == null)
                       return 'Price must be a number';
-                    }
                     return null;
                   },
                 ),
@@ -172,12 +191,10 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   controller: quantityController,
                   hintText: 'Quantity',
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
+                    if (value == null || value.isEmpty)
                       return 'Please enter the quantity';
-                    }
-                    if (double.tryParse(value) == null) {
+                    if (double.tryParse(value) == null)
                       return 'Quantity must be a number';
-                    }
                     return null;
                   },
                 ),
@@ -185,54 +202,63 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 CustomTextField(
                   controller: carBrandController,
                   hintText: 'Car Brand',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the car brand';
-                    }
-                    return null;
-                  },
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please enter the car brand'
+                              : null,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   controller: carModelController,
                   hintText: 'Car Model',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the car model';
-                    }
-                    return null;
-                  },
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please enter the car model'
+                              : null,
                 ),
                 const SizedBox(height: 10),
                 CustomTextField(
                   controller: carYearController,
                   hintText: 'Car Year',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter the car year';
-                    }
-                    return null;
-                  },
+                  validator:
+                      (value) =>
+                          value == null || value.isEmpty
+                              ? 'Please enter the car year'
+                              : null,
                 ),
                 const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: DropdownButton(
-                    value: category,
-                    icon: const Icon(Icons.keyboard_arrow_down),
-                    items: productCategories.map((String item) {
-                      return DropdownMenuItem(
-                        value: item,
-                        child: Text(item),
-                      );
-                    }).toList(),
-                    onChanged: (String? newVal) {
-                      setState(() {
-                        category = newVal!;
-                      });
-                    },
-                  ),
-                ),
+                loadingCategories
+                    ? const Center(child: CircularProgressIndicator())
+                    : DropdownButtonFormField<String>(
+                      value: selectedCategoryId,
+                      hint: const Text('Select Category'),
+                      items:
+                          categories.map((cat) {
+                            return DropdownMenuItem<String>(
+                              value: cat.id,
+                              child: Text(cat.name),
+                            );
+                          }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCategoryId = value ?? '';
+                          selectedCategoryName =
+                              categories
+                                  .firstWhere(
+                                    (cat) => cat.id == value,
+                                    orElse:
+                                        () => Category(
+                                          id: '',
+                                          name: '',
+                                          imageUrl: '',
+                                        ),
+                                  )
+                                  .name;
+                        });
+                      },
+                    ),
                 const SizedBox(height: 10),
                 CustomButton(text: 'Sell', onTap: sellProduct),
               ],

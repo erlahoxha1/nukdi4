@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/features/admin/screens/posts_screen.dart';
 import 'package:nukdi4/features/admin/screens/analtyics_screen.dart';
-
+import 'package:nukdi4/features/admin/screens/manage_categories_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   static const String routeName = '/admin-screen';
@@ -28,6 +28,24 @@ class _AdminScreenState extends State<AdminScreen> {
     setState(() {
       _page = page;
     });
+  }
+
+  Widget buildNavIcon(IconData icon, int index) {
+    return Container(
+      width: bottomBarWidth,
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color:
+                _page == index
+                    ? GlobalVariables.selectedNavBarColor
+                    : GlobalVariables.backgroundColor,
+            width: bottomBarBorderWidth,
+          ),
+        ),
+      ),
+      child: Icon(icon),
+    );
   }
 
   @override
@@ -57,6 +75,25 @@ class _AdminScreenState extends State<AdminScreen> {
                 'Admin Panel',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'manage_categories') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ManageCategoriesScreen(),
+                      ),
+                    );
+                  }
+                },
+                itemBuilder:
+                    (context) => [
+                      const PopupMenuItem(
+                        value: 'manage_categories',
+                        child: Text('Manage Categories'),
+                      ),
+                    ],
+              ),
             ],
           ),
         ),
@@ -70,61 +107,16 @@ class _AdminScreenState extends State<AdminScreen> {
         iconSize: 28,
         onTap: updatePage,
         items: [
-          //posts
           BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color:
-                        _page == 0
-                            ? GlobalVariables.selectedNavBarColor
-                            : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
-              child: const Icon(Icons.home_outlined),
-            ),
-            label: '',
-          ), //analytics
-          BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color:
-                        _page == 1
-                            ? GlobalVariables.selectedNavBarColor
-                            : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
-              child: const Icon(Icons.analytics_outlined),
-            ),
+            icon: buildNavIcon(Icons.home_outlined, 0),
             label: '',
           ),
-          //orders
           BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color:
-                        _page == 2
-                            ? GlobalVariables.selectedNavBarColor
-                            : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
-              child: const Icon(Icons.all_inbox_outlined),
-            ),
+            icon: buildNavIcon(Icons.analytics_outlined, 1),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: buildNavIcon(Icons.all_inbox_outlined, 2),
             label: '',
           ),
         ],

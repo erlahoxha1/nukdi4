@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nukdi4/features/home/screens/category_products_screen.dart';
+import 'package:nukdi4/features/home/services/category_services.dart';
 import 'package:nukdi4/features/search/screens/filterscreen.dart';
+import 'package:nukdi4/models/category.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String routeName = '/home';
@@ -11,10 +13,34 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void navigateToCategory(String name) {
+  final CategoryService categoryService = CategoryService();
+  List<Category> categories = [];
+  bool loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategories();
+  }
+
+  Future<void> _loadCategories() async {
+    final cats = await categoryService.fetchAll();
+    setState(() {
+      categories = cats;
+      loading = false;
+    });
+  }
+
+  void navigateToCategory(Category category) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => CategoryProductsScreen(category: name)),
+      MaterialPageRoute(
+        builder:
+            (_) => CategoryProductsScreen(
+              categoryId: category.id, // ✅ pass ID
+              categoryName: category.name, // ✅ pass name
+            ),
+      ),
     );
   }
 
@@ -25,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
         builder:
             (_) => FilterScreen(
               onApply: (filteredProducts) {
-                // Handle filtered results if needed
                 print('Filtered products: ${filteredProducts.length}');
               },
             ),
@@ -33,13 +58,22 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  final List<Map<String, dynamic>> categories = [
-    {'name': 'Controller', 'icon': Icons.settings_remote},
-    {'name': 'EV Charger', 'icon': Icons.electric_car},
-    {'name': 'Motor', 'icon': Icons.motorcycle},
-    {'name': 'Charger', 'icon': Icons.battery_charging_full},
-    {'name': 'Battery', 'icon': Icons.battery_full},
-  ];
+  IconData getCategoryIcon(String name) {
+    switch (name.toLowerCase()) {
+      case 'controller':
+        return Icons.settings_remote;
+      case 'ev charger':
+        return Icons.electric_car;
+      case 'motor':
+        return Icons.motorcycle;
+      case 'charger':
+        return Icons.battery_charging_full;
+      case 'battery':
+        return Icons.battery_full;
+      default:
+        return Icons.category;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🔹 Updated: "Product Categories" with filter icon
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -118,52 +151,61 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: GridView.builder(
-                itemCount: categories.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                ),
-                itemBuilder: (context, index) {
-                  final category = categories[index];
-                  return GestureDetector(
-                    onTap: () => navigateToCategory(category['name']),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            blurRadius: 6,
-                            offset: const Offset(2, 2),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            category['icon'],
-                            size: 40,
-                            color: Colors.blueAccent,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            category['name'],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
+              child:
+                  loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : categories.isEmpty
+                      ? const Center(child: Text('No categories available'))
+                      : GridView.builder(
+                        itemCount: categories.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 1.2,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
                             ),
-                          ),
-                        ],
+                        itemBuilder: (context, index) {
+                          final category = categories[index];
+                          return GestureDetector(
+                            onTap:
+                                () => navigateToCategory(
+                                  category,
+                                ), // ✅ use full category object
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 6,
+                                    offset: const Offset(2, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    getCategoryIcon(category.name),
+                                    size: 40,
+                                    color: Colors.blueAccent,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    category.name,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                    ),
-                  );
-                },
-              ),
             ),
           ],
         ),

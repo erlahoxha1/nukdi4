@@ -19,7 +19,8 @@ class AdminServices {
     required String description,
     required double price,
     required double quantity,
-    required String category,
+    required String categoryId, // backend expects this as 'category'
+    required String categoryName, // we pass name too
     required List<File> images,
     required String carBrand,
     required String carModel,
@@ -43,7 +44,8 @@ class AdminServices {
         'description': description,
         'price': price,
         'quantity': quantity,
-        'category': category,
+        'category': categoryId, // ✅ backend uses 'category' for ID
+        'categoryName': categoryName, // ✅ extra name passed
         'images': imageUrls,
         'carBrand': carBrand,
         'carModel': carModel,

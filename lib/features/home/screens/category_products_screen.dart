@@ -5,10 +5,14 @@ import 'package:nukdi4/common/widgets/loader.dart';
 import 'package:nukdi4/features/product_details/screens/product_details_screen.dart';
 
 class CategoryProductsScreen extends StatefulWidget {
-  final String category;
+  final String categoryId; // ✅ NEW: ID for filtering
+  final String categoryName; // ✅ NEW: name for displaying
 
-  const CategoryProductsScreen({Key? key, required this.category})
-    : super(key: key);
+  const CategoryProductsScreen({
+    Key? key,
+    required this.categoryId,
+    required this.categoryName,
+  }) : super(key: key);
 
   @override
   State<CategoryProductsScreen> createState() => _CategoryProductsScreenState();
@@ -38,7 +42,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   void fetchProducts() async {
     products = await homeServices.fetchCategoryProducts(
       context: context,
-      category: widget.category,
+      categoryId: widget.categoryId, // ✅ use ID for backend filtering
     );
     applyFilters();
   }
@@ -65,7 +69,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
               matchesPrice;
         }).toList();
 
-    // Sort
     if (selectedSort == 'Name A-Z') {
       displayedProducts.sort((a, b) => a.name.compareTo(b.name));
     } else if (selectedSort == 'Name Z-A') {
@@ -244,7 +247,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.category.toUpperCase()),
+        title: Text(widget.categoryName.toUpperCase()), // ✅ show name on top
         backgroundColor: Colors.blue,
       ),
       body:

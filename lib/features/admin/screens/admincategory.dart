@@ -3,16 +3,20 @@ import 'package:nukdi4/features/admin/services/admin_services.dart';
 import 'package:nukdi4/models/product.dart';
 
 class AdminCategoryProductsScreen extends StatefulWidget {
-  final String category;
-  const AdminCategoryProductsScreen({super.key, required this.category});
+  final String categoryId;
+  final String categoryName;
+
+  const AdminCategoryProductsScreen({
+    Key? key,
+    required this.categoryId,
+    required this.categoryName,
+  }) : super(key: key);
 
   @override
-  State<AdminCategoryProductsScreen> createState() =>
-      _AdminCategoryProductsScreenState();
+  State<AdminCategoryProductsScreen> createState() => _AdminCategoryProductsScreenState();
 }
 
-class _AdminCategoryProductsScreenState
-    extends State<AdminCategoryProductsScreen> {
+class _AdminCategoryProductsScreenState extends State<AdminCategoryProductsScreen> {
   List<Product> products = [];
 
   @override
@@ -25,7 +29,7 @@ class _AdminCategoryProductsScreenState
     final all = await AdminServices().fetchAllProducts(context);
     if (!mounted) return;
     setState(() {
-      products = all.where((p) => p.category == widget.category).toList();
+      products = all.where((p) => p.categoryId == widget.categoryId).toList();
     });
   }
 
@@ -45,7 +49,7 @@ class _AdminCategoryProductsScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.category)),
+      appBar: AppBar(title: Text(widget.categoryName)),
       body: GridView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: products.length,

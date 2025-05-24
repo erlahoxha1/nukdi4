@@ -1,25 +1,25 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
-
 import 'package:nukdi4/constants/error_handling.dart';
 import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/constants/utils.dart';
 import 'package:nukdi4/models/product.dart';
 import 'package:nukdi4/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeServices {
+  // ✅ Fetch all products for a given categoryId
   Future<List<Product>> fetchCategoryProducts({
     required BuildContext context,
-    required String category,
+    required String categoryId, // we now pass categoryId, not just name
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     List<Product> productList = [];
 
     try {
       http.Response res = await http.get(
-        Uri.parse('$uri/api/products?category=$category'),
+        Uri.parse('$uri/api/products?categoryId=$categoryId'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
@@ -30,13 +30,8 @@ class HomeServices {
         response: res,
         context: context,
         onSuccess: () {
-          final List decoded = jsonDecode(res.body);
-          for (var productMap in decoded) {
-            print(
-              "Fetched: ${productMap['name']} | Brand: ${productMap['carBrand']}, Model: ${productMap['carModel']}, Year: ${productMap['carYear']}",
-            );
-
-            productList.add(Product.fromMap(productMap));
+          for (var item in jsonDecode(res.body)) {
+            productList.add(Product.fromMap(item));
           }
         },
       );
@@ -47,23 +42,14 @@ class HomeServices {
     return productList;
   }
 
-  Future<Product> fetchDealOfDay({required BuildContext context}) async {
+  // ✅ You can also include a general fetchAllProducts if needed
+  Future<List<Product>> fetchAllProducts(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    Product product = Product(
-      name: '',
-      description: '',
-      quantity: 0,
-      images: [],
-      category: '',
-      price: 0,
-      carBrand: '',
-      carModel: '',
-      carYear: '',
-    );
+    List<Product> productList = [];
 
     try {
       http.Response res = await http.get(
-        Uri.parse('$uri/api/deal-of-day'),
+        Uri.parse('$uri/api/products'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
@@ -74,17 +60,15 @@ class HomeServices {
         response: res,
         context: context,
         onSuccess: () {
-          final map = jsonDecode(res.body);
-          print(
-            "Deal of Day: ${map['name']} | Brand: ${map['carBrand']}, Model: ${map['carModel']}, Year: ${map['carYear']}",
-          );
-          product = Product.fromMap(map);
+          for (var item in jsonDecode(res.body)) {
+            productList.add(Product.fromMap(item));
+          }
         },
       );
     } catch (e) {
       showSnackBar(context, e.toString());
     }
 
-    return product;
+    return productList;
   }
 }
