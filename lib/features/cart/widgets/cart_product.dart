@@ -12,7 +12,8 @@ class CartProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     final cartItem = context.watch<UserProvider>().user.cart[index];
     final product = Product.fromMap(cartItem['product']);
-    final quantity = cartItem['quantity'];
+    final quantity = int.tryParse(cartItem['quantity'].toString()) ?? 0;
+
     final cartServices = CartServices();
 
     return Dismissible(

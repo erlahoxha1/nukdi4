@@ -13,6 +13,7 @@ class CartServices {
   void addToCart({
     required BuildContext context,
     required Product product,
+    int quantity = 1, // ✅ add quantity param, default to 1
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
@@ -23,7 +24,10 @@ class CartServices {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: jsonEncode({'id': product.id}),
+        body: jsonEncode({
+          'id': product.id,
+          'quantity': quantity, // ✅ ensure quantity is passed
+        }),
       );
 
       httpErrorHandle(

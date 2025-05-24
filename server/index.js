@@ -8,6 +8,7 @@ const adminRouter = require('./routes/admin');
 const productRouter = require('./routes/product');
 const userRouter = require('./routes/user');
 const categoryRouter = require('./routes/category');
+const paypalRoutes = require('./routes/paypal');
 
 
 const app = express();
@@ -22,7 +23,9 @@ app.use(authRouter);
 app.use(adminRouter);
 app.use(productRouter);
 app.use(userRouter);
-app.use("/api/categories", categoryRouter);  // ✅ category routes under /api/categories
+app.use("/api/categories", categoryRouter); 
+app.use(paypalRoutes);
+ // ✅ category routes under /api/categories
 
 // CONNECTION
 mongoose.connect(DB)

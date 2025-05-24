@@ -34,7 +34,8 @@ class _CartScreenState extends State<CartScreen> {
     bool hasInvalidQuantity = false;
 
     for (var e in user.cart) {
-      final quantity = e['quantity'];
+      final quantity = int.tryParse(e['quantity'].toString()) ?? 0;
+
       final product = e['product'];
       sum += quantity * product['price'];
 
