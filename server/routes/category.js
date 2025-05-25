@@ -4,14 +4,19 @@ const { v4: uuid } = require('uuid');
 const Category = require('../models/category');
 const { uploadToCloudinary } = require('../utils/cloudinary');
 
-const categoryRouter = express.Router();  // ✅ renamed to categoryRouter
+const categoryRouter = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// ✅ GET all categories
+// ✅ GET all categories (renamed imageUrl to image for frontend)
 categoryRouter.get('/', async (req, res) => {
   try {
     const categories = await Category.find().sort('name');
-    res.json(categories);
+    const mapped = categories.map(cat => ({
+      _id: cat._id,
+      name: cat.name,
+      image: cat.imageUrl,  // ✅ rename field for Flutter
+    }));
+    res.json(mapped);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch categories', details: err.message });
   }
@@ -47,4 +52,4 @@ categoryRouter.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = categoryRouter;  // ✅ consistent export
+module.exports = categoryRouter;

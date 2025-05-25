@@ -68,10 +68,10 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       );
 
     case OrderDetailScreen.routeName:
-      var order = routeSettings.arguments as Order;
+      final order = routeSettings.arguments as Order;
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => OrderDetailScreen(order: order),
+        builder: (_) => const OrderDetailScreen(), // 👈 no parameter
       );
 
     case '/add-address':

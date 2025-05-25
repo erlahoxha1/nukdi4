@@ -1,293 +1,198 @@
-import 'package:nukdi4/common/widgets/custom_button.dart';
-import 'package:nukdi4/constants/global_variables.dart';
-import 'package:nukdi4/features/admin/services/admin_services.dart';
-import 'package:nukdi4/features/search/screens/search_screen.dart';
-import 'package:nukdi4/models/order.dart';
-import 'package:nukdi4/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:nukdi4/constants/paypal.dart'; // ✅ make sure you import your PayPal screen
+import 'package:nukdi4/models/order.dart';
+import 'package:nukdi4/models/product.dart';
 
-class OrderDetailScreen extends StatefulWidget {
-  static const String routeName = '/order-details';
-  final Order order;
-  const OrderDetailScreen({Key? key, required this.order}) : super(key: key);
+class OrderDetailScreen extends StatelessWidget {
+  static const routeName = '/order-details';
 
-  @override
-  State<OrderDetailScreen> createState() => _OrderDetailScreenState();
-}
+  const OrderDetailScreen({Key? key}) : super(key: key);
 
-class _OrderDetailScreenState extends State<OrderDetailScreen> {
-  int currentStep = 0;
-  final AdminServices adminServices = AdminServices();
+  /* ───────────────────────── Helpers ───────────────────────── */
 
-  void navigateToSearchScreen(String query) {
-    Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
+  String _statusText(int code) {
+    switch (code) {
+      case 0:
+        return 'Pending';
+      case 1:
+        return 'Paid';
+      case 2:
+        return 'Shipped';
+      case 3:
+        return 'Delivered';
+      default:
+        return 'Unknown';
+    }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    currentStep = widget.order.status;
+  Color _statusColor(int code) {
+    switch (code) {
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.blue;
+      case 3:
+        return Colors.purple;
+      default:
+        return Colors.orange;
+    }
   }
 
-  void changeOrderStatus(int status) {
-    adminServices.changeOrderStatus(
-      context: context,
-      status: status + 1,
-      order: widget.order,
-      onSuccess: () {
-        setState(() {
-          currentStep += 1;
-        });
-      },
-    );
-  }
+  /* ─────────────────────────  UI  ───────────────────────── */
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
+    final Order order = ModalRoute.of(context)!.settings.arguments as Order;
+
+    final formattedDate = DateFormat(
+      'dd MMM yyyy • HH:mm',
+    ).format(DateTime.fromMillisecondsSinceEpoch(order.orderedAt));
+
+    final df = NumberFormat.currency(symbol: '\$', decimalDigits: 2);
 
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
-            ),
-          ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Container(
-                  height: 42,
-                  margin: const EdgeInsets.only(left: 15),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(7),
-                    elevation: 1,
-                    child: TextFormField(
-                      onFieldSubmitted: navigateToSearchScreen,
-                      decoration: InputDecoration(
-                        prefixIcon: InkWell(
-                          onTap: () {},
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 6),
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.black,
-                              size: 23,
-                            ),
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: Colors.white,
-                        contentPadding: const EdgeInsets.only(top: 10),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          borderSide: BorderSide(
-                            color: Colors.black38,
-                            width: 1,
-                          ),
-                        ),
-                        hintText: 'Search Amazon.in',
-                        hintStyle: const TextStyle(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 17,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container(
-                color: Colors.transparent,
-                height: 42,
-                margin: const EdgeInsets.symmetric(horizontal: 10),
-                child: const Icon(Icons.mic, color: Colors.black, size: 25),
-              ),
-            ],
-          ),
-        ),
-      ),
+      appBar: AppBar(title: const Text('Order Details')),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'View order details',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black12),
-                ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            /* ── Order Summary Card ── */
+            Card(
+              margin: EdgeInsets.zero,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Order Date: ${DateFormat().format(DateTime.fromMillisecondsSinceEpoch(widget.order.orderedAt))}',
-                    ),
-                    Text('Order ID: ${widget.order.id}'),
-                    Text('Order Total: \$${widget.order.totalPrice}'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Purchase Details',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black12),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    for (int i = 0; i < widget.order.products.length; i++)
-                      Row(
-                        children: [
-                          Image.network(
-                            widget.order.products[i].images[0],
-                            height: 120,
-                            width: 120,
+                    _twoCol('Order ID', order.id),
+                    const SizedBox(height: 6),
+                    _twoCol('Date', formattedDate),
+                    const SizedBox(height: 6),
+                    _twoCol('Address', order.address),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Text(
+                          'Status',
+                          style: TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 4,
                           ),
-                          const SizedBox(width: 5),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.order.products[i].name,
-                                  style: const TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text('Qty: ${widget.order.quantity[i]}'),
-                              ],
+                          decoration: BoxDecoration(
+                            color: _statusColor(order.status).withOpacity(.15),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            _statusText(order.status),
+                            style: TextStyle(
+                              color: _statusColor(order.status),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
-                        ],
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Tracking',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black12),
-                ),
-                child: Stepper(
-                  currentStep: currentStep,
-                  controlsBuilder: (context, details) {
-                    if (user.type == 'admin') {
-                      return CustomButton(
-                        text: 'Done',
-                        onTap: () => changeOrderStatus(details.currentStep),
-                      );
-                    }
-                    return const SizedBox();
-                  },
-                  steps: [
-                    Step(
-                      title: const Text('Pending'),
-                      content: const Text('Your order is yet to be delivered'),
-                      isActive: currentStep > 0,
-                      state:
-                          currentStep > 0
-                              ? StepState.complete
-                              : StepState.indexed,
+                        ),
+                      ],
                     ),
-                    Step(
-                      title: const Text('Completed'),
-                      content: const Text(
-                        'Your order has been delivered, you are yet to sign.',
-                      ),
-                      isActive: currentStep > 1,
-                      state:
-                          currentStep > 1
-                              ? StepState.complete
-                              : StepState.indexed,
-                    ),
-                    Step(
-                      title: const Text('Received'),
-                      content: const Text(
-                        'Your order has been delivered and signed by you.',
-                      ),
-                      isActive: currentStep > 2,
-                      state:
-                          currentStep > 2
-                              ? StepState.complete
-                              : StepState.indexed,
-                    ),
-                    Step(
-                      title: const Text('Delivered'),
-                      content: const Text(
-                        'Your order has been delivered and signed by you!',
-                      ),
-                      isActive: currentStep >= 3,
-                      state:
-                          currentStep >= 3
-                              ? StepState.complete
-                              : StepState.indexed,
+                    const Divider(height: 28),
+                    _twoCol(
+                      'Total Paid',
+                      df.format(order.totalPrice),
+                      boldRight: true,
                     ),
                   ],
                 ),
               ),
+            ),
 
-              const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-              // ✅ Add Continue Payment button here
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 18),
-                    backgroundColor: Colors.orange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PayPalPaymentScreen(),
+            /* ── Items header ── */
+            const Text(
+              'Items',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 10),
+
+            /* ── Items list ── */
+            ListView.builder(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: order.products.length,
+              itemBuilder: (context, idx) {
+                final Product p = order.products[idx];
+                final int qty = order.quantity[idx];
+                final double lineTotal = p.price * qty;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    children: [
+                      /* thumbnail */
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          p.images.isNotEmpty
+                              ? p.images[0]
+                              : 'https://via.placeholder.com/60',
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    );
-                  },
-                  child: const Text(
-                    'Yes, Continue Payment',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                      const SizedBox(width: 12),
+                      /* description */
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              p.name,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 4),
+                            Text('x$qty  •  ${df.format(p.price)}'),
+                          ],
+                        ),
+                      ),
+                      /* line total */
+                      Text(
+                        df.format(lineTotal),
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-            ],
-          ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
   }
+
+  /* helper for summary key-value rows */
+  Widget _twoCol(String left, String right, {bool boldRight = false}) => Row(
+    children: [
+      Text(left, style: const TextStyle(fontWeight: FontWeight.w600)),
+      const Spacer(),
+      Flexible(
+        child: Text(
+          right,
+          textAlign: TextAlign.end,
+          style: TextStyle(
+            fontWeight: boldRight ? FontWeight.w700 : FontWeight.w400,
+          ),
+        ),
+      ),
+    ],
+  );
 }

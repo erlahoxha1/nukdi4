@@ -37,8 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
       MaterialPageRoute(
         builder:
             (_) => CategoryProductsScreen(
-              categoryId: category.id, // ✅ pass ID
-              categoryName: category.name, // ✅ pass name
+              categoryId: category.id,
+              categoryName: category.name,
             ),
       ),
     );
@@ -168,10 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final category = categories[index];
                           return GestureDetector(
-                            onTap:
-                                () => navigateToCategory(
-                                  category,
-                                ), // ✅ use full category object
+                            onTap: () => navigateToCategory(category),
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -187,10 +184,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(
-                                    getCategoryIcon(category.name),
-                                    size: 40,
-                                    color: Colors.blueAccent,
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      category.imageUrl,
+                                      height: 60,
+                                      width: 60,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (
+                                        context,
+                                        error,
+                                        stackTrace,
+                                      ) {
+                                        return Icon(
+                                          getCategoryIcon(category.name),
+                                          size: 40,
+                                          color: Colors.blueAccent,
+                                        );
+                                      },
+                                    ),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
