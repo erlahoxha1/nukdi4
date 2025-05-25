@@ -3,13 +3,11 @@ import 'package:nukdi4/features/account/screens/orders_screen.dart';
 import 'package:nukdi4/features/account/screens/profile_screen.dart';
 import 'package:nukdi4/features/account/services/account_services.dart';
 import 'package:nukdi4/features/order_details/screens/order_details.dart';
-import 'package:nukdi4/features/account/screens/profile_screen.dart';
 import 'package:nukdi4/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
-// ... (your existing imports)
-import 'package:nukdi4/features/account/screens/add_address_screen.dart'; // <-- NEW
+import 'package:nukdi4/features/account/screens/add_address_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
@@ -19,93 +17,116 @@ class AccountScreen extends StatelessWidget {
     final user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        title: const Text(
-          'My Account',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-        ),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const CircleAvatar(
-                  radius: 28,
-                  backgroundColor: Colors.blue,
-                  child: Icon(Icons.person, color: Colors.white, size: 30),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: Text(
-                    'Hello, ${user.name.toLowerCase()}',
-                    style: const TextStyle(
-                      fontSize: 22,
+      body: Stack(
+        children: [
+          Container(color: const Color(0xFF680909)), // dark red background
+          ClipPath(
+            clipper: SteepDiagonalClipper(),
+            child: Container(
+              color: const Color(0xFF1C1C1E),
+            ), // dark gray overlay
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'My Account',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 30),
+                  Row(
+                    children: [
+                      const CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.blue,
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.white,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Text(
+                          'Hello, ${user.name.toLowerCase()}',
+                          style: const TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 35),
+                  _buildProfileTile(
+                    context,
+                    icon: Icons.shopping_bag_outlined,
+                    label: 'View Your Orders',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const OrdersScreen()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildProfileTile(
+                    context,
+                    icon: Icons.person_outline,
+                    label: 'My Profile',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ProfileScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildProfileTile(
+                    context,
+                    icon: Icons.location_on_outlined,
+                    label: 'Add Address',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AddAddressScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 12),
+                  _buildProfileTile(
+                    context,
+                    icon: Icons.logout,
+                    label: 'Log Out',
+                    iconColor: Colors.redAccent,
+                    onTap: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
+                      await prefs.remove('x-auth-token');
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        AuthScreen.routeName,
+                        (route) => false,
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 35),
-            _buildProfileTile(
-              context,
-              icon: Icons.shopping_bag_outlined,
-              label: 'View Your Orders',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const OrdersScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildProfileTile(
-              context,
-              icon: Icons.person_outline,
-              label: 'My Profile',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildProfileTile(
-              context,
-              icon: Icons.location_on_outlined,
-              label: 'Add Address',
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AddAddressScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 12),
-            _buildProfileTile(
-              context,
-              icon: Icons.logout,
-              label: 'Log Out',
-              iconColor: Colors.redAccent,
-              onTap: () async {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.remove('x-auth-token');
-                Navigator.pushNamedAndRemoveUntil(
-                  context,
-                  AuthScreen.routeName,
-                  (route) => false,
-                );
-              },
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -115,7 +136,7 @@ class AccountScreen extends StatelessWidget {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
-    Color iconColor = Colors.blue,
+    Color iconColor = Colors.white,
   }) {
     return InkWell(
       onTap: onTap,
@@ -123,14 +144,13 @@ class AccountScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
+          color: Colors.black.withOpacity(0.3), // semi-transparent black
           borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.4),
               blurRadius: 8,
-              offset: const Offset(0, 2),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -140,11 +160,31 @@ class AccountScreen extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               label,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
             ),
           ],
         ),
       ),
     );
   }
+}
+
+class SteepDiagonalClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, size.height);
+    path.lineTo(size.width, size.height * 0.3);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

@@ -17,16 +17,13 @@ class OrdersScreen extends StatefulWidget {
 
 class _OrdersScreenState extends State<OrdersScreen> {
   List<Order>? orders;
-  final placeholder =
-      'https://via.placeholder.com/80x80.png?text=No+Image'; // fallback thumbnail
+  final placeholder = 'https://via.placeholder.com/80x80.png?text=No+Image';
 
   @override
   void initState() {
     super.initState();
     fetchOrders();
   }
-
-  /* ────────────────────────── API CALL ────────────────────────── */
 
   Future<void> fetchOrders() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -60,79 +57,161 @@ class _OrdersScreenState extends State<OrdersScreen> {
     }
   }
 
-  /* ───────────────────────────  UI  ─────────────────────────── */
-
   @override
   Widget build(BuildContext context) {
-    // 1) still loading
     if (orders == null) {
       return const Scaffold(body: Loader());
     }
 
-    // 2) empty list
-    if (orders!.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Your Orders')),
-        body: const Center(child: Text('You haven’t placed any orders yet.')),
-      );
-    }
-
-    // 3) list of orders
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Orders')),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: orders!.length,
-        itemBuilder: (context, index) {
-          final order = orders![index];
-
-          final hasProduct = order.products.isNotEmpty;
-          final product = hasProduct ? order.products[0] : null;
-          final imageUrl =
-              (hasProduct && product!.images.isNotEmpty)
-                  ? product.images[0]
-                  : placeholder;
-
-          return GestureDetector(
-            onTap:
-                hasProduct
-                    ? () => Navigator.pushNamed(
-                      context,
-                      OrderDetailScreen.routeName,
-                      arguments: order,
-                    )
-                    : null,
-            child: Card(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 80,
-                      height: 80,
-                      child: Image.network(imageUrl, fit: BoxFit.cover),
-                    ),
-                    const SizedBox(width: 20),
-                    Expanded(
-                      child: Text(
-                        hasProduct ? product!.name : 'Empty order',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+      body: Stack(
+        children: [
+          Container(color: const Color(0xFF680909)), // dark red
+          ClipPath(
+            clipper: SteepDiagonalClipper(),
+            child: Container(
+              color: const Color(0xFF1C1C1E),
+            ), // dark gray overlay
+          ),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 20,
+                  ),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
                       ),
-                    ),
-                    const Icon(Icons.chevron_right),
-                  ],
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Your Orders',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+                Expanded(
+                  child:
+                      orders!.isEmpty
+                          ? const Center(
+                            child: Text(
+                              'You haven’t placed any orders yet.',
+                              style: TextStyle(
+                                color: Colors.white70,
+                                fontSize: 18,
+                              ),
+                            ),
+                          )
+                          : ListView.builder(
+                            padding: const EdgeInsets.all(16),
+                            itemCount: orders!.length,
+                            itemBuilder: (context, index) {
+                              final order = orders![index];
+                              final hasProduct = order.products.isNotEmpty;
+                              final product =
+                                  hasProduct ? order.products[0] : null;
+                              final imageUrl =
+                                  (hasProduct && product!.images.isNotEmpty)
+                                      ? product.images[0]
+                                      : placeholder;
+
+                              return InkWell(
+                                onTap:
+                                    hasProduct
+                                        ? () => Navigator.pushNamed(
+                                          context,
+                                          OrderDetailScreen.routeName,
+                                          arguments: order,
+                                        )
+                                        : null,
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.4),
+                                    borderRadius: BorderRadius.circular(16),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.3),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(16),
+                                          bottomLeft: Radius.circular(16),
+                                        ),
+                                        child: Image.network(
+                                          imageUrl,
+                                          width: 100,
+                                          height: 80,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Text(
+                                          hasProduct
+                                              ? product!.name
+                                              : 'Empty order',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.only(right: 12),
+                                        child: Icon(
+                                          Icons.chevron_right,
+                                          color: Colors.white70,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                ),
+              ],
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
+}
+
+class SteepDiagonalClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, size.height);
+    path.lineTo(size.width, size.height * 0.3);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

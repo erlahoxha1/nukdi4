@@ -18,7 +18,7 @@ class BottomBar extends StatefulWidget {
 class _BottomBarState extends State<BottomBar> {
   int _page = 0;
   double bottomBarWidth = 42;
-  double bottomBarBorderWidth = 5;
+  double bottomBarBorderWidth = 4;
 
   List<Widget> pages = [
     const HomeScreen(),
@@ -40,78 +40,57 @@ class _BottomBarState extends State<BottomBar> {
       body: pages[_page],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _page,
-        selectedItemColor: GlobalVariables.selectedNavBarColor,
-        unselectedItemColor: GlobalVariables.unselectedNavBarColor,
-        backgroundColor: GlobalVariables.backgroundColor,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey.shade400,
+        backgroundColor: const Color(0xFF1C1C1E), // dark gray background
         iconSize: 28,
         onTap: updatePage,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         items: [
-          // HOME
           BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color:
-                        _page == 0
-                            ? GlobalVariables.selectedNavBarColor
-                            : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
-              child: const Icon(Icons.home_outlined),
-            ),
+            icon: _buildNavItem(Icons.home_outlined, 0),
             label: '',
           ),
-          // ACCOUNT
           BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color:
-                        _page == 1
-                            ? GlobalVariables.selectedNavBarColor
-                            : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
-                ),
-              ),
-              child: const Icon(Icons.person_outline_outlined),
-            ),
+            icon: _buildNavItem(Icons.person_outline_outlined, 1),
             label: '',
           ),
-          // CART
           BottomNavigationBarItem(
-            icon: Container(
-              width: bottomBarWidth,
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color:
-                        _page == 2
-                            ? GlobalVariables.selectedNavBarColor
-                            : GlobalVariables.backgroundColor,
-                    width: bottomBarBorderWidth,
-                  ),
+            icon: badges.Badge(
+              badgeContent: Text(
+                userCartLen.toString(),
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-              child: badges.Badge(
-                badgeContent: Text(userCartLen.toString()),
-                badgeStyle: const badges.BadgeStyle(
-                  elevation: 0,
-                  badgeColor: Colors.white,
-                ),
-                child: const Icon(Icons.shopping_cart_outlined),
+              badgeStyle: const badges.BadgeStyle(
+                elevation: 0,
+                badgeColor: Colors.white,
               ),
+              child: _buildNavItem(Icons.shopping_cart_outlined, 2),
             ),
             label: '',
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNavItem(IconData icon, int index) {
+    return Container(
+      width: bottomBarWidth,
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: _page == index ? Colors.redAccent : Colors.transparent,
+            width: bottomBarBorderWidth,
+          ),
+        ),
+      ),
+      child: Icon(icon),
     );
   }
 }

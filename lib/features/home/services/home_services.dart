@@ -9,10 +9,10 @@ import 'package:nukdi4/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
 class HomeServices {
-  // ✅ Fetch all products for a given categoryId
+  // ✅ Fetch products by categoryId
   Future<List<Product>> fetchCategoryProducts({
     required BuildContext context,
-    required String categoryId, // we now pass categoryId, not just name
+    required String categoryId,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     List<Product> productList = [];
@@ -42,7 +42,7 @@ class HomeServices {
     return productList;
   }
 
-  // ✅ You can also include a general fetchAllProducts if needed
+  // ✅ Fetch all products (optional)
   Future<List<Product>> fetchAllProducts(BuildContext context) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     List<Product> productList = [];
@@ -69,6 +69,39 @@ class HomeServices {
       showSnackBar(context, e.toString());
     }
 
+    return productList;
+  }
+
+  // ✅ Search products by query
+  Future<List<Product>> searchProducts({
+    required BuildContext context,
+    required String query,
+    required String token,
+  }) async {
+    List<Product> productList = [];
+    try {
+      final res = await http.get(
+        Uri.parse('$uri/api/products/search/$query'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token,
+        },
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          for (var item in jsonDecode(res.body)) {
+            productList.add(
+              Product.fromMap(item),
+            ); // ✅ use fromMap consistently
+          }
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
     return productList;
   }
 }

@@ -59,12 +59,19 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       context: context,
       builder:
           (_) => AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Address updated successfully!'),
+            backgroundColor: Colors.grey[900],
+            title: const Text('Success', style: TextStyle(color: Colors.white)),
+            content: const Text(
+              'Address updated successfully!',
+              style: TextStyle(color: Colors.white70),
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
               ),
             ],
           ),
@@ -87,65 +94,99 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Add Address'),
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              buildField(_cityController, 'City', _isEditable),
-              const SizedBox(height: 10),
-              buildField(_countryController, 'Country', _isEditable),
-              const SizedBox(height: 10),
-              buildPostalField(_postalCodeController, _isEditable),
-              const SizedBox(height: 10),
-              buildField(_streetController, 'Street Address', _isEditable),
-              const SizedBox(height: 30),
-
-              if (!_isEditable)
-                ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEditable = true;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: const Text(
-                    'Change Address',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-
-              if (_isEditable)
-                ElevatedButton(
-                  onPressed: saveAddress,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: const Text('Save Address'),
-                ),
-            ],
+      body: Stack(
+        children: [
+          Container(color: const Color(0xFF680909)), // dark red
+          ClipPath(
+            clipper: SteepDiagonalClipper(),
+            child: Container(color: const Color(0xFF1C1C1E)), // dark gray
           ),
-        ),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Add Address',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        buildField(_cityController, 'City', _isEditable),
+                        const SizedBox(height: 10),
+                        buildField(_countryController, 'Country', _isEditable),
+                        const SizedBox(height: 10),
+                        buildPostalField(_postalCodeController, _isEditable),
+                        const SizedBox(height: 10),
+                        buildField(
+                          _streetController,
+                          'Street Address',
+                          _isEditable,
+                        ),
+                        const SizedBox(height: 30),
+
+                        if (!_isEditable)
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _isEditable = true;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              minimumSize: const Size.fromHeight(50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Change Address',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+
+                        if (_isEditable)
+                          ElevatedButton(
+                            onPressed: saveAddress,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              minimumSize: const Size.fromHeight(50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text(
+                              'Save Address',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -158,9 +199,24 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     return TextFormField(
       controller: controller,
       enabled: enabled,
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(),
+        labelStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.black.withOpacity(0.4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white70),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white38),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.redAccent),
+        ),
       ),
       validator: (value) {
         if (!enabled) return null;
@@ -176,14 +232,29 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
     return TextFormField(
       controller: controller,
       enabled: enabled,
+      style: const TextStyle(color: Colors.white),
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(4),
       ],
-      decoration: const InputDecoration(
+      decoration: InputDecoration(
         labelText: 'Postal Code',
-        border: OutlineInputBorder(),
+        labelStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.black.withOpacity(0.4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white70),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white38),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.redAccent),
+        ),
         counterText: '',
       ),
       autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -199,4 +270,20 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
       },
     );
   }
+}
+
+class SteepDiagonalClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, size.height);
+    path.lineTo(size.width, size.height * 0.3);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

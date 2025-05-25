@@ -49,19 +49,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
       phone: _phoneController.text.trim(),
     );
 
-    // Show confirmation dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Profile Updated"),
-          content: const Text("Your profile has been successfully updated."),
+          backgroundColor: Colors.grey[900],
+          title: const Text(
+            "Profile Updated",
+            style: TextStyle(color: Colors.white),
+          ),
+          content: const Text(
+            "Your profile has been successfully updated.",
+            style: TextStyle(color: Colors.white70),
+          ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text("OK"),
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                "OK",
+                style: TextStyle(color: Colors.redAccent),
+              ),
             ),
           ],
         );
@@ -72,33 +79,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            buildTextField(_firstNameController, 'First Name'),
-            const SizedBox(height: 10),
-            buildTextField(_lastNameController, 'Last Name'),
-            const SizedBox(height: 10),
-            buildTextField(_emailController, 'Email'),
-            const SizedBox(height: 10),
-            buildTextField(_phoneController, 'Phone Number'),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: saveProfile,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size.fromHeight(50),
-                backgroundColor: Colors.blue.shade50,
-                foregroundColor: Colors.blue.shade900,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
+      body: Stack(
+        children: [
+          Container(color: const Color(0xFF680909)), // dark red
+          ClipPath(
+            clipper: SteepDiagonalClipper(),
+            child: Container(color: const Color(0xFF1C1C1E)), // dark gray
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'Edit Profile',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  buildTextField(_firstNameController, 'First Name'),
+                  const SizedBox(height: 10),
+                  buildTextField(_lastNameController, 'Last Name'),
+                  const SizedBox(height: 10),
+                  buildTextField(_emailController, 'Email'),
+                  const SizedBox(height: 10),
+                  buildTextField(_phoneController, 'Phone Number'),
+                  const SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(50),
+                      backgroundColor: Colors.redAccent,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text(
+                      'Save Changes',
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ],
               ),
-              child: const Text('Save Changes'),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -106,10 +144,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget buildTextField(TextEditingController controller, String label) {
     return TextField(
       controller: controller,
+      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(),
+        labelStyle: const TextStyle(color: Colors.white70),
+        filled: true,
+        fillColor: Colors.black.withOpacity(0.4),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white70),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.white38),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.redAccent),
+        ),
       ),
     );
   }
+}
+
+class SteepDiagonalClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(0, size.height);
+    path.lineTo(size.width, size.height * 0.3);
+    path.lineTo(size.width, 0);
+    path.lineTo(0, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
