@@ -60,12 +60,14 @@ class Product {
       carModel: map['carModel'] ?? '',
       carYear: map['carYear'] ?? '',
       id: map['_id'],
-      rating: map['ratings'] != null
-          ? List<Rating>.from(map['ratings']?.map((x) => Rating.fromMap(x)))
-          : null,
+      rating:
+          map['ratings'] != null
+              ? List<Rating>.from(map['ratings']?.map((x) => Rating.fromMap(x)))
+              : null,
     );
   }
 
   String toJson() => json.encode(toMap());
-  factory Product.fromJson(String source) => Product.fromMap(json.decode(source));
+  factory Product.fromJson(String source) =>
+      Product.fromMap(json.decode(source));
 }

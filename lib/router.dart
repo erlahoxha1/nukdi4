@@ -46,7 +46,6 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         builder: (_) => const AddProductScreen(),
       );
 
-
     case SearchScreen.routeName:
       var searchQuery = routeSettings.arguments as String;
       return MaterialPageRoute(

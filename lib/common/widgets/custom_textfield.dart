@@ -19,7 +19,8 @@ class CustomTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
-      validator: validator ??
+      validator:
+          validator ??
           (val) {
             if (val == null || val.isEmpty) {
               return 'Please enter your $hintText';

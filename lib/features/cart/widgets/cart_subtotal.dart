@@ -17,18 +17,10 @@ class CartSubtotal extends StatelessWidget {
       margin: const EdgeInsets.all(10),
       child: Row(
         children: [
-          const Text(
-            'Subtotal ',
-            style: TextStyle(
-              fontSize: 20,
-            ),
-          ),
+          const Text('Subtotal ', style: TextStyle(fontSize: 20)),
           Text(
             '\$$sum',
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
         ],
       ),

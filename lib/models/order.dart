@@ -39,12 +39,9 @@ class Order {
     return Order(
       id: map['_id'] ?? '',
       products: List<Product>.from(
-          map['products']?.map((x) => Product.fromMap(x['product']))),
-      quantity: List<int>.from(
-        map['products']?.map(
-          (x) => x['quantity'],
-        ),
+        map['products']?.map((x) => Product.fromMap(x['product'])),
       ),
+      quantity: List<int>.from(map['products']?.map((x) => x['quantity'])),
       address: map['address'] ?? '',
       userId: map['userId'] ?? '',
       orderedAt: map['orderedAt']?.toInt() ?? 0,

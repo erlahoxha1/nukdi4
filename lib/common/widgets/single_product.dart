@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SingleProduct extends StatelessWidget {
   final String image;
-  const SingleProduct({Key? key, required this.image,}) : super(key: key);
+  const SingleProduct({Key? key, required this.image}) : super(key: key);
   // final Product product;
 
   @override
@@ -18,7 +18,7 @@ class SingleProduct extends StatelessWidget {
         child: Container(
           width: 180,
           padding: const EdgeInsets.all(10),
-          child: Image.network(image, fit: BoxFit.fitHeight,width: 180,),
+          child: Image.network(image, fit: BoxFit.fitHeight, width: 180),
         ),
       ),
     );

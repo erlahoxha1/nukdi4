@@ -4,14 +4,23 @@ const auth = require("../middlewares/auth");
 const { Product } = require("../models/product");
 
 // 🔹 Get products by category
-productRouter.get("/api/products/", auth, async (req, res) => {
+productRouter.get("/api/products", auth, async (req, res) => {
   try {
-    const products = await Product.find({ category: req.query.category });
+    const categoryId = req.query.categoryId;
+
+    let products;
+    if (categoryId) {
+      products = await Product.find({ categoryId: categoryId });
+    } else {
+      products = await Product.find({});
+    }
+
     res.json(products);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
 });
+
 
 // 🔹 Search products by name
 productRouter.get("/api/products/search/:name", auth, async (req, res) => {
