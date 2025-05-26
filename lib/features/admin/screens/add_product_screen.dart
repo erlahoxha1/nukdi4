@@ -7,6 +7,7 @@ import 'package:nukdi4/constants/utils.dart';
 import 'package:nukdi4/features/admin/services/admin_services.dart';
 import 'package:nukdi4/features/home/services/category_services.dart';
 import 'package:nukdi4/models/category.dart';
+import 'package:flutter/services.dart';
 
 class AddProductScreen extends StatefulWidget {
   static const String routeName = '/add-product';
@@ -28,6 +29,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
   final AdminServices adminServices = AdminServices();
   final CategoryService categoryService = CategoryService();
   final _addProductFormKey = GlobalKey<FormState>();
+
+  String capitalizeEachWord(String input) {
+    return input
+        .split(' ')
+        .map(
+          (word) =>
+              word.isNotEmpty
+                  ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
+                  : '',
+        )
+        .join(' ');
+  }
+
+  String capitalizeFirstLetterOfSentences(String input) {
+    return input.replaceAllMapped(
+      RegExp(r'([.!?]\s*|^)([a-z])'),
+      (Match m) => '${m[1]}${m[2]!.toUpperCase()}',
+    );
+  }
 
   List<Category> categories = [];
   String? selectedCategoryId;
@@ -72,15 +92,17 @@ class _AddProductScreenState extends State<AddProductScreen> {
         selectedCategoryId != null) {
       adminServices.sellProduct(
         context: context,
-        name: productNameController.text,
-        description: descriptionController.text,
+        name: capitalizeEachWord(productNameController.text),
+        description: capitalizeFirstLetterOfSentences(
+          descriptionController.text,
+        ),
         price: double.parse(priceController.text),
         quantity: double.parse(quantityController.text),
         categoryId: selectedCategoryId!,
-        categoryName: selectedCategoryName!, // ✅ ADD THIS
+        categoryName: capitalizeEachWord(selectedCategoryName!), // ✅ ADD THIS
         images: images,
-        carBrand: carBrandController.text,
-        carModel: carModelController.text,
+        carBrand: capitalizeEachWord(carBrandController.text),
+        carModel: capitalizeEachWord(carModelController.text),
         carYear: carYearController.text,
       );
     } else {
@@ -222,11 +244,20 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 CustomTextField(
                   controller: carYearController,
                   hintText: 'Car Year',
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(4),
+                  ],
                   validator:
-                      (value) =>
-                          value == null || value.isEmpty
-                              ? 'Please enter the car year'
-                              : null,
+                      (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter the car year';
+                    }
+                    if (!RegExp(r'^\d{4}$').hasMatch(value.trim())) {
+                      return 'Please enter exactly 4 digits';
+                    }
+                    return null;
+                  },
                 ),
                 const SizedBox(height: 10),
                 loadingCategories

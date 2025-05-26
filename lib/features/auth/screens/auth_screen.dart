@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nukdi4/features/auth/services/auth_service.dart';
+import 'package:flutter/services.dart';
 
 class AuthScreen extends StatefulWidget {
   static const routeName = '/auth-screen';
@@ -19,6 +20,17 @@ class _AuthScreenState extends State<AuthScreen> {
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String capitalizeEachWord(String input) {
+    return input
+        .split(' ')
+        .map(
+          (word) =>
+              word.isNotEmpty
+                  ? '${word[0].toUpperCase()}${word.substring(1).toLowerCase()}'
+                  : '',
+        )
+        .join(' ');
+  }
 
   @override
   void dispose() {
@@ -36,8 +48,8 @@ class _AuthScreenState extends State<AuthScreen> {
         context: context,
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
-        firstName: _firstNameController.text.trim(),
-        lastName: _lastNameController.text.trim(),
+        firstName: capitalizeEachWord(_firstNameController.text.trim()),
+        lastName: capitalizeEachWord(_lastNameController.text.trim()),
         phone: _phoneController.text.trim(),
       );
     } else {

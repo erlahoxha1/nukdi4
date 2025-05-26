@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
 import 'package:nukdi4/features/account/screens/add_address_screen.dart';
 
+
 class AccountScreen extends StatelessWidget {
   const AccountScreen({Key? key}) : super(key: key);
 
@@ -55,7 +56,7 @@ class AccountScreen extends StatelessWidget {
                       const SizedBox(width: 15),
                       Expanded(
                         child: Text(
-                          'Hello, ${user.name.toLowerCase()}',
+                          'Hello, ${user.name}',
                           style: const TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,

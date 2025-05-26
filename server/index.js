@@ -15,7 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB connection
-const DB = "mongodb+srv://ehoxha22:test123@cluster0.ct9zyhg.mongodb.net/nukdiapp?retryWrites=true&w=majority&appName=Cluster0";
+const DB = "mongodb+srv://ersamezuraj9:test123@cluster0.habr1ja.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 // MIDDLEWARE
 app.use(express.json());
