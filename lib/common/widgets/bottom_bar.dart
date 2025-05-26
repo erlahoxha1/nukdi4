@@ -85,7 +85,10 @@ class _BottomBarState extends State<BottomBar> {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: _page == index ? Colors.redAccent : Colors.transparent,
+            color:
+                _page == index
+                    ? const Color.fromARGB(255, 255, 255, 255)
+                    : Colors.transparent,
             width: bottomBarBorderWidth,
           ),
         ),

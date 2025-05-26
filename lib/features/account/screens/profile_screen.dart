@@ -67,7 +67,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () => Navigator.of(context).pop(),
               child: const Text(
                 "OK",
-                style: TextStyle(color: Colors.redAccent),
+                style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
               ),
             ),
           ],
@@ -121,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onPressed: saveProfile,
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size.fromHeight(50),
-                      backgroundColor: Colors.redAccent,
+                      backgroundColor: const Color.fromARGB(255, 104, 9, 9),
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -160,7 +160,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 104, 9, 9)),
         ),
       ),
     );

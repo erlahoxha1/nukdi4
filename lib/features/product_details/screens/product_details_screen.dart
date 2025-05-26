@@ -55,7 +55,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 },
                 child: const Text(
                   'Continue Shopping',
-                  style: TextStyle(color: Colors.blueAccent),
+                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
               TextButton(
@@ -65,7 +65,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 },
                 child: const Text(
                   'Go to Cart',
-                  style: TextStyle(color: Colors.blueAccent),
+                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ],
@@ -82,7 +82,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E),
+      backgroundColor: const Color(0xFF1C1C1E), // dark background
       body: SafeArea(
         child: Column(
           children: [
@@ -94,7 +94,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     onTap: () => Navigator.pop(context),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.redAccent,
+                        color: const Color.fromARGB(255, 104, 9, 9),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding: const EdgeInsets.all(8),
@@ -137,7 +137,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: Colors.redAccent.withOpacity(0.1),
+                          color: const Color(0xFF680909), // deep red box
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Column(
@@ -170,43 +170,55 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   ),
                                 ),
                                 const SizedBox(width: 10),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.remove,
-                                    color: Colors.white,
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                  onPressed: () {
-                                    if (userQuantity > 1) {
-                                      setState(() => userQuantity--);
-                                    }
-                                  },
-                                ),
-                                Text(
-                                  '$userQuantity',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    if (userQuantity <
-                                        widget.product.quantity) {
-                                      setState(() => userQuantity++);
-                                    } else {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('No stock available'),
+                                  child: Row(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.remove,
+                                          color: Colors.white,
                                         ),
-                                      );
-                                    }
-                                  },
+                                        onPressed: () {
+                                          if (userQuantity > 1) {
+                                            setState(() => userQuantity--);
+                                          }
+                                        },
+                                      ),
+                                      Text(
+                                        '$userQuantity',
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(
+                                          Icons.add,
+                                          color: Colors.white,
+                                        ),
+                                        onPressed: () {
+                                          if (userQuantity <
+                                              widget.product.quantity) {
+                                            setState(() => userQuantity++);
+                                          } else {
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              const SnackBar(
+                                                content: Text(
+                                                  'No stock available',
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 const Spacer(),
                                 Text(
@@ -232,8 +244,12 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 const Spacer(),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        GlobalVariables.selectedNavBarColor,
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      104,
+                                      9,
+                                      9,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),

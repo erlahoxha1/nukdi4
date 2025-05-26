@@ -69,14 +69,19 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
               matchesPrice;
         }).toList();
 
-    if (selectedSort == 'Name A-Z') {
-      displayedProducts.sort((a, b) => a.name.compareTo(b.name));
-    } else if (selectedSort == 'Name Z-A') {
-      displayedProducts.sort((a, b) => b.name.compareTo(a.name));
-    } else if (selectedSort == 'Price Low-High') {
-      displayedProducts.sort((a, b) => a.price.compareTo(b.price));
-    } else if (selectedSort == 'Price High-Low') {
-      displayedProducts.sort((a, b) => b.price.compareTo(a.price));
+    switch (selectedSort) {
+      case 'Name A-Z':
+        displayedProducts.sort((a, b) => a.name.compareTo(b.name));
+        break;
+      case 'Name Z-A':
+        displayedProducts.sort((a, b) => b.name.compareTo(a.name));
+        break;
+      case 'Price Low-High':
+        displayedProducts.sort((a, b) => a.price.compareTo(b.price));
+        break;
+      case 'Price High-Low':
+        displayedProducts.sort((a, b) => b.price.compareTo(a.price));
+        break;
     }
 
     setState(() {});
@@ -95,7 +100,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          Container(color: Colors.red.shade900),
+          Container(color: const Color.fromARGB(255, 104, 9, 9)),
           ClipPath(
             clipper: DiagonalClipper(),
             child: Container(color: const Color(0xFF1C1C1E)),
@@ -114,7 +119,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                         onTap: () => Navigator.pop(context),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.redAccent,
+                            color: const Color.fromARGB(255, 104, 9, 9),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           padding: const EdgeInsets.all(6),
@@ -162,18 +167,16 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                             iconEnabledColor: Colors.white70,
                             items:
                                 [
-                                      'Name A-Z',
-                                      'Name Z-A',
-                                      'Price Low-High',
-                                      'Price High-Low',
-                                    ]
-                                    .map(
-                                      (label) => DropdownMenuItem(
-                                        value: label,
-                                        child: Text(label),
-                                      ),
-                                    )
-                                    .toList(),
+                                  'Name A-Z',
+                                  'Name Z-A',
+                                  'Price Low-High',
+                                  'Price High-Low',
+                                ].map((label) {
+                                  return DropdownMenuItem(
+                                    value: label,
+                                    child: Text(label),
+                                  );
+                                }).toList(),
                             onChanged: (value) {
                               selectedSort = value!;
                               applyFilters();
@@ -203,8 +206,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                   crossAxisCount: 2,
                                   mainAxisSpacing: 16,
                                   crossAxisSpacing: 16,
-                                  childAspectRatio:
-                                      0.7, // ↓ just a bit taller to stop overflow
+                                  childAspectRatio: 0.7,
                                 ),
                             itemBuilder: (context, index) {
                               final product = displayedProducts[index];
@@ -227,7 +229,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Expanded(
-                                        // ← lets the image shrink if needed
                                         child: ClipRRect(
                                           borderRadius: const BorderRadius.only(
                                             topLeft: Radius.circular(16),
@@ -294,8 +295,6 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     );
   }
 
-  /* ─────────────────────────── Filter Sheet helpers ────────────────────────── */
-
   void showFilterSheet() {
     final allNames = products!.map((e) => e.name).toSet().toList();
     final allBrands = products!.map((e) => e.carBrand).toSet().toList();
@@ -305,29 +304,38 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white.withOpacity(0.95),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (_) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.9,
+          initialChildSize: 0.9, // ✅ fully expanded on open
+          minChildSize: 0.4,
+          maxChildSize: 0.9,
           builder: (_, scrollController) {
             return StatefulBuilder(
               builder: (BuildContext context, StateSetter setModalState) {
-                return Padding(
-                  padding: const EdgeInsets.all(16),
+                return Container(
+                  margin: const EdgeInsets.only(top: 50),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: ListView(
                     controller: scrollController,
                     children: [
                       const Text(
                         'Filter',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 6),
                       buildExpansion(
                         "Product Name",
                         allNames,
@@ -352,7 +360,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                         selectedYears,
                         setModalState,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 10),
                       const Text(
                         "Price Range",
                         style: TextStyle(fontWeight: FontWeight.bold),
@@ -370,15 +378,15 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                             (values) =>
                                 setModalState(() => priceRange = values),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 12),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
                           applyFilters();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.redAccent,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          backgroundColor: const Color.fromARGB(255, 104, 9, 9),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -405,7 +413,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
                         child: const Text(
                           "Reset Filters",
                           style: TextStyle(
-                            color: Colors.red,
+                            color: Color.fromARGB(255, 104, 9, 9),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -428,6 +436,7 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     StateSetter setModalState,
   ) {
     return ExpansionTile(
+      tilePadding: EdgeInsets.zero,
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
       children:
           options

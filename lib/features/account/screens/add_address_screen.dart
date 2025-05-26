@@ -70,7 +70,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                 onPressed: () => Navigator.pop(context),
                 child: const Text(
                   'OK',
-                  style: TextStyle(color: Colors.redAccent),
+                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
                 ),
               ),
             ],
@@ -149,7 +149,12 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                104,
+                                9,
+                                9,
+                              ),
                               minimumSize: const Size.fromHeight(50),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -168,7 +173,12 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                           ElevatedButton(
                             onPressed: saveAddress,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.redAccent,
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                104,
+                                9,
+                                9,
+                              ),
                               minimumSize: const Size.fromHeight(50),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -176,7 +186,11 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
                             ),
                             child: const Text(
                               'Save Address',
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white, // force white text
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                       ],
@@ -215,7 +229,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 104, 9, 9)),
         ),
       ),
       validator: (value) {
@@ -253,7 +267,7 @@ class _AddAddressScreenState extends State<AddAddressScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 104, 9, 9)),
         ),
         counterText: '',
       ),

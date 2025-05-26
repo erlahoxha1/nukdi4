@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
-import 'package:nukdi4/provider/user_provider.dart'; // ✅ adjust this path if needed
+import 'package:nukdi4/provider/user_provider.dart';
 
 class PaypalPaymentScreen extends StatefulWidget {
   static const String routeName = '/paypal-payment';
@@ -30,25 +30,21 @@ class _PaypalPaymentScreenState extends State<PaypalPaymentScreen> {
       isLoading = true;
     });
 
-    // Simulate a delay to mimic redirecting to PayPal and back
     await Future.delayed(const Duration(seconds: 2));
 
     try {
-      // Make a POST request to your backend to save the order
       final response = await http.post(
         Uri.parse('http://192.168.1.49:3000/api/save-order'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': userProvider.user.token, // ✅ pass the token here
+          'x-auth-token': userProvider.user.token,
         },
         body: json.encode({
-          'totalPrice': widget.totalAmount, // ✅ corrected field name
+          'totalPrice': widget.totalAmount,
           'address': widget.address,
-          'status': 1, // ✅ pass as number (1 = Paid)
-          'orderedAt':
-              DateTime.now().millisecondsSinceEpoch, // ✅ pass as number
-          'products':
-              [], // ✅ empty array (you can fill with real cart items later)
+          'status': 1,
+          'orderedAt': DateTime.now().millisecondsSinceEpoch,
+          'products': [],
         }),
       );
 
@@ -60,8 +56,6 @@ class _PaypalPaymentScreenState extends State<PaypalPaymentScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Payment Successful! Order saved.')),
         );
-
-        // Navigate to success screen or pop back
         Navigator.pop(context, 'Payment Success!');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -82,47 +76,137 @@ class _PaypalPaymentScreenState extends State<PaypalPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Pay with PayPal")),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Address: ${widget.address}",
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "Total: \$${widget.totalAmount.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 30),
-            Center(
-              child: ElevatedButton(
-                onPressed: isLoading ? null : fakePayPalFlow,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                    horizontal: 32,
+      body: Stack(
+        children: [
+          Container(color: const Color.fromARGB(255, 104, 9, 9)),
+          ClipPath(
+            clipper: DiagonalClipper(),
+            child: Container(color: const Color(0xFF1C1C1E)),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color.fromARGB(255, 104, 9, 9),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: const Icon(Icons.arrow_back, color: Colors.white),
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 20),
+                  const Center(
+                    child: Text(
+                      "Pay with PayPal",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                ),
-                child:
-                    isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                          "Continue with PayPal",
-                          style: TextStyle(fontSize: 16, color: Colors.white),
+                  const SizedBox(height: 30),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Shipping Address",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
                         ),
+                        const SizedBox(height: 6),
+                        Text(
+                          widget.address,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.white70,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Total Amount",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          "\$${widget.totalAmount.toStringAsFixed(2)}",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: isLoading ? null : fakePayPalFlow,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 81, 168, 245),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child:
+                          isLoading
+                              ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                              : const Text(
+                                "Continue with PayPal",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class DiagonalClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    Path path = Path();
+    path.moveTo(size.width, 0);
+    path.lineTo(0, size.height);
+    path.lineTo(0, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }

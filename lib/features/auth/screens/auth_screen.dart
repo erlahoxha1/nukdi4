@@ -103,7 +103,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           value: true,
                           groupValue: isSignUp,
                           onChanged: (_) => setState(() => isSignUp = true),
-                          activeColor: Colors.blue,
+                          activeColor: const Color.fromARGB(255, 104, 9, 9),
                         ),
                         const Text(
                           "Create Account",
@@ -114,7 +114,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           value: false,
                           groupValue: isSignUp,
                           onChanged: (_) => setState(() => isSignUp = false),
-                          activeColor: Colors.teal,
+                          activeColor: const Color.fromARGB(255, 104, 9, 9),
                         ),
                         const Text(
                           "Sign In.",
@@ -143,7 +143,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     ElevatedButton(
                       onPressed: _handleAuth,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color.fromARGB(255, 104, 9, 9),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         minimumSize: const Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(

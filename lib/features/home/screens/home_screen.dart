@@ -170,7 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ? "Search Results"
                                     : "Explore Categories",
                                 style: const TextStyle(
-                                  color: Colors.white70,
+                                  color: Color.fromARGB(255, 255, 255, 255),
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -314,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         backgroundColor: Colors.black,
-        child: const Icon(Icons.language, color: Colors.white),
+        child: const Icon(Icons.camera_alt, color: Colors.white),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

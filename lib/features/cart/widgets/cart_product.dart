@@ -10,7 +10,8 @@ class CartProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartItem = context.watch<UserProvider>().user.cart[index];
+    final userProvider = context.watch<UserProvider>();
+    final cartItem = userProvider.user.cart[index];
     final product = Product.fromMap(cartItem['product']);
     final quantity = int.tryParse(cartItem['quantity'].toString()) ?? 0;
 
@@ -26,7 +27,17 @@ class CartProduct extends StatelessWidget {
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       onDismissed: (direction) {
+        // ✅ Remove from backend
         cartServices.removeFromCart(context: context, product: product);
+
+        // ✅ Also remove locally
+        userProvider.user.cart.removeAt(index);
+        userProvider.notifyListeners();
+
+        // ✅ Optionally show feedback
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Item removed from cart')));
       },
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),

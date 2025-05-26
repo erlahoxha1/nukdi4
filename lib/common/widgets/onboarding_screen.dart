@@ -7,19 +7,19 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFF1C1C1E), // dark charcoal background
       body: SafeArea(
         child: Stack(
           children: [
-            // Background circle
+            // SMALLER Background red circle
             Positioned(
-              bottom: 100,
-              right: -100,
+              bottom: 120,
+              right: -90,
               child: Container(
-                height: 300,
-                width: 300,
+                height: 280, // smaller size
+                width: 280,
                 decoration: const BoxDecoration(
-                  color: Colors.lightBlueAccent,
+                  color: Color.fromARGB(255, 104, 9, 9),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -33,7 +33,7 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 40),
 
-                  // 🚨 MAIN BRANDING: AUTOSPARKS
+                  // 🚨 Brand title
                   const Text(
                     "AUTOSPARKS",
                     textAlign: TextAlign.center,
@@ -41,17 +41,17 @@ class OnboardingScreen extends StatelessWidget {
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
-                      color: Colors.black,
+                      color: Colors.white,
                     ),
                   ),
 
                   const SizedBox(height: 30),
 
-                  // 🏷️ Hero Title
+                  // Hero title
                   RichText(
                     textAlign: TextAlign.center,
                     text: const TextSpan(
-                      style: TextStyle(fontSize: 26, color: Colors.black),
+                      style: TextStyle(fontSize: 26, color: Colors.white),
                       children: [
                         TextSpan(
                           text: 'Get the ',
@@ -61,7 +61,7 @@ class OnboardingScreen extends StatelessWidget {
                           text: 'best\n',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: Colors.lightBlue,
+                            color: Color.fromARGB(255, 104, 9, 9),
                           ),
                         ),
                         TextSpan(
@@ -77,27 +77,34 @@ class OnboardingScreen extends StatelessWidget {
                   const Text(
                     "Search thousands of parts that fit your car's needs.",
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14.5, color: Colors.black54),
+                    style: TextStyle(fontSize: 14.5, color: Colors.white70),
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 10),
 
-                  // 🚘 Car Image
-                  Image.asset(
-                    'assets/images/car.png',
-                    height: 240,
-                    fit: BoxFit.contain,
+                  // 🚘 Rotated right & scaled car image
+                  Transform(
+                    alignment: Alignment.center,
+                    transform:
+                        Matrix4.identity()
+                          ..rotateY(0.2) // rotate slightly right
+                          ..scale(1.5), // enlarge 50%
+                    child: Image.asset(
+                      'assets/images/car.png',
+                      height: 220,
+                      fit: BoxFit.contain,
+                    ),
                   ),
 
                   const Spacer(),
 
-                  // CTA Button
+                  // CTA button
                   SizedBox(
                     width: double.infinity,
                     height: 55,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: const Color.fromARGB(255, 104, 9, 9),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),
                         ),
