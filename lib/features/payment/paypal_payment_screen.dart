@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:nukdi4/provider/user_provider.dart';
+import 'package:nukdi4/constants/utils.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:nukdi4/constants/global_variables.dart';
+import 'package:nukdi4/models/user.dart';
 
 class PaypalPaymentScreen extends StatefulWidget {
   static const String routeName = '/paypal-payment';
@@ -23,53 +26,46 @@ class PaypalPaymentScreen extends StatefulWidget {
 class _PaypalPaymentScreenState extends State<PaypalPaymentScreen> {
   bool isLoading = false;
 
-  Future<void> fakePayPalFlow() async {
+  Future<void> placeOrderWithBackend() async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     setState(() {
       isLoading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 2));
-
     try {
-      final response = await http.post(
-        Uri.parse('http://192.168.1.49:3000/api/save-order'),
+      final res = await http.post(
+        Uri.parse('$uri/api/save-order'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: json.encode({
-          'totalPrice': widget.totalAmount,
+        body: jsonEncode({
           'address': widget.address,
-          'status': 1,
+          'totalPrice': widget.totalAmount,
+          'status': 1, // ✅ mark as Paid
           'orderedAt': DateTime.now().millisecondsSinceEpoch,
-          'products': [],
         }),
       );
 
-      setState(() {
-        isLoading = false;
-      });
+      if (res.statusCode == 200) {
+        // ✅ Clear local cart after success
+        User updatedUser = userProvider.user.copyWith(cart: []);
+        userProvider.setUserFromModel(updatedUser);
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Payment Successful! Order saved.')),
-        );
-        Navigator.pop(context, 'Payment Success!');
+        showSnackBar(context, 'Payment Successful! Order saved.');
+        Navigator.popUntil(context, ModalRoute.withName('/cart'));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save order: ${response.body}')),
-        );
+        showSnackBar(context, 'Failed to save order: ${res.body}');
       }
     } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      showSnackBar(context, 'Error: $e');
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
@@ -162,9 +158,14 @@ class _PaypalPaymentScreenState extends State<PaypalPaymentScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: isLoading ? null : fakePayPalFlow,
+                      onPressed: isLoading ? null : placeOrderWithBackend,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 81, 168, 245),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          81,
+                          168,
+                          245,
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

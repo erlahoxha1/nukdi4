@@ -7,15 +7,10 @@ import 'package:nukdi4/models/product.dart';
 import 'package:nukdi4/provider/user_provider.dart';
 import 'package:provider/provider.dart';
 
-class CartScreen extends StatefulWidget {
+class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
 
-  @override
-  State<CartScreen> createState() => _CartScreenState();
-}
-
-class _CartScreenState extends State<CartScreen> {
-  void navigateToAddress(double sum) {
+  void navigateToAddress(BuildContext context, double sum) {
     Navigator.pushNamed(
       context,
       AddressScreen.routeName,
@@ -23,228 +18,245 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 
-  void goBackToShopping() {
+  void goBackToShopping(BuildContext context) {
     Navigator.pushReplacementNamed(context, BottomBar.routeName);
   }
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = context.watch<UserProvider>();
-    final user = userProvider.user;
+    return Consumer<UserProvider>(
+      builder: (context, userProvider, _) {
+        final user = userProvider.user;
 
-    double sum = 0;
-    bool hasInvalidQuantity = false;
+        double sum = 0;
+        bool hasInvalidQuantity = false;
 
-    for (var e in user.cart) {
-      final quantity = int.tryParse(e['quantity'].toString()) ?? 0;
-      final product = e['product'];
-      sum += quantity * product['price'];
+        for (var e in user.cart) {
+          final quantity = int.tryParse(e['quantity'].toString()) ?? 0;
+          final product = e['product'];
+          sum += quantity * product['price'];
 
-      if (quantity > product['quantity']) {
-        hasInvalidQuantity = true;
-      }
-    }
+          if (quantity > product['quantity']) {
+            hasInvalidQuantity = true;
+          }
+        }
 
-    final bool isCartEmpty = user.cart.isEmpty;
-    final bool hasAddress = user.address.trim().isNotEmpty;
-    final bool isProceedEnabled =
-        !isCartEmpty && hasAddress && !hasInvalidQuantity;
+        final bool isCartEmpty = user.cart.isEmpty;
+        final bool hasAddress = user.address.trim().isNotEmpty;
+        final bool isProceedEnabled =
+            !isCartEmpty && hasAddress && !hasInvalidQuantity;
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(color: const Color.fromARGB(255, 104, 9, 9)),
-          ClipPath(
-            clipper: DiagonalClipper(),
-            child: Container(color: const Color(0xFF1C1C1E)),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12.0,
-                  vertical: 10,
-                ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    const Center(
-                      child: Text(
-                        'Shopping Cart',
-                        style: TextStyle(
-                          fontSize: 22,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+        return Scaffold(
+          body: Stack(
+            children: [
+              Container(color: const Color.fromARGB(255, 104, 9, 9)),
+              ClipPath(
+                clipper: DiagonalClipper(),
+                child: Container(color: const Color(0xFF1C1C1E)),
+              ),
+              SafeArea(
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12.0,
+                      vertical: 10,
                     ),
-                    const SizedBox(height: 20),
-                    _buildStepperBar(),
-                    const SizedBox(height: 20),
-
-                    Row(
+                    child: Column(
                       children: [
-                        const Text(
-                          'Subtotal ',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
-                        ),
-                        Text(
-                          '\$${sum.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-
-                    if (isCartEmpty)
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 8.0),
-                        child: Text(
-                          '🛒 Your cart is empty. Add items to continue.',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-                      )
-                    else if (!hasAddress)
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 8.0),
-                        child: Text(
-                          '📬 Please save a shipping address before proceeding.',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-                      )
-                    else if (hasInvalidQuantity)
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 8.0),
-                        child: Text(
-                          '⚠️ Some items exceed available stock. Please adjust quantities.',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 104, 9, 9),
-                          ),
-                        ),
-                      ),
-
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 18),
-                          backgroundColor:
-                              isProceedEnabled
-                                  ? const Color.fromARGB(255, 104, 9, 9)
-                                  : Colors.grey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed:
-                            isProceedEnabled
-                                ? () => navigateToAddress(sum)
-                                : null,
-                        child: Text(
-                          'Proceed to Buy (${user.cart.length} items)',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color:
-                                isProceedEnabled
-                                    ? Colors.white
-                                    : const Color.fromARGB(255, 255, 255, 255),
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: user.cart.length,
-                      itemBuilder: (context, index) {
-                        final product = Product.fromMap(
-                          user.cart[index]['product'],
-                        );
-                        return Dismissible(
-                          key: Key(product.id.toString()),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.only(right: 20),
-                            color: Colors.redAccent,
-                            child: const Icon(
-                              Icons.delete,
+                        const SizedBox(height: 10),
+                        const Center(
+                          child: Text(
+                            'Shopping Cart',
+                            style: TextStyle(
+                              fontSize: 22,
                               color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
-                          onDismissed: (direction) {
-                            setState(() {
-                              user.cart.removeAt(index);
-                              userProvider.notifyListeners();
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Item removed from cart'),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildStepperBar(),
+                        const SizedBox(height: 20),
+
+                        Row(
+                          children: [
+                            const Text(
+                              'Subtotal ',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              '\$${sum.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+
+                        if (isCartEmpty)
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              '🛒 Your cart is empty. Add items to continue.',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ),
+                          )
+                        else if (!hasAddress)
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              '📬 Please save a shipping address before proceeding.',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255),
+                              ),
+                            ),
+                          )
+                        else if (hasInvalidQuantity)
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 8.0),
+                            child: Text(
+                              '⚠️ Some items exceed available stock. Please adjust quantities.',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 104, 9, 9),
+                              ),
+                            ),
+                          ),
+
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              backgroundColor:
+                                  isProceedEnabled
+                                      ? const Color.fromARGB(255, 104, 9, 9)
+                                      : Colors.grey,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onPressed:
+                                isProceedEnabled
+                                    ? () => navigateToAddress(context, sum)
+                                    : null,
+                            child: Text(
+                              'Proceed to Buy (${user.cart.length} items)',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color:
+                                    isProceedEnabled
+                                        ? Colors.white
+                                        : const Color.fromARGB(
+                                          255,
+                                          255,
+                                          255,
+                                          255,
+                                        ),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: user.cart.length,
+                          itemBuilder: (context, index) {
+                            final product = Product.fromMap(
+                              user.cart[index]['product'],
+                            );
+                            return Dismissible(
+                              key: Key(product.id.toString()),
+                              direction: DismissDirection.endToStart,
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                padding: const EdgeInsets.only(right: 20),
+                                color: Colors.redAccent,
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              onDismissed: (direction) {
+                                final updatedCart = [...user.cart];
+                                updatedCart.removeAt(index);
+                                final updatedUser = user.copyWith(
+                                  cart: updatedCart,
+                                );
+                                userProvider.setUserFromModel(updatedUser);
+
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Item removed from cart'),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.symmetric(vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.4),
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.5),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CartProduct(index: index),
+                                ),
                               ),
                             );
                           },
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.4),
-                              borderRadius: BorderRadius.circular(16),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.5),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        OutlinedButton.icon(
+                          onPressed: () => goBackToShopping(context),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Go back to shopping',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.white),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                              horizontal: 20,
                             ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CartProduct(index: index),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    OutlinedButton.icon(
-                      onPressed: goBackToShopping,
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      label: const Text(
-                        'Go back to shopping',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.white),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                          horizontal: 20,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
+                        const SizedBox(height: 20),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

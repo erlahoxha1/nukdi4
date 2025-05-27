@@ -33,7 +33,6 @@ class AddressServices {
           User user = userProvider.user.copyWith(
             address: jsonDecode(res.body)['address'],
           );
-
           userProvider.setUserFromModel(user);
         },
       );
@@ -42,7 +41,6 @@ class AddressServices {
     }
   }
 
-  // get all the products
   void placeOrder({
     required BuildContext context,
     required String address,
@@ -69,6 +67,43 @@ class AddressServices {
         context: context,
         onSuccess: () {
           showSnackBar(context, 'Your order has been placed!');
+          User user = userProvider.user.copyWith(cart: []);
+          userProvider.setUserFromModel(user);
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString());
+    }
+  }
+
+  void savePayPalOrder({
+    required BuildContext context,
+    required String address,
+    required double totalSum,
+  }) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    try {
+      http.Response res = await http.post(
+        Uri.parse('$uri/api/save-order'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+        body: jsonEncode({
+          'cart': userProvider.user.cart,
+          'address': address,
+          'totalPrice': totalSum,
+          'status': 1, // Paid
+          'orderedAt': DateTime.now().millisecondsSinceEpoch,
+        }),
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          showSnackBar(context, 'Your PayPal order has been placed!');
           User user = userProvider.user.copyWith(cart: []);
           userProvider.setUserFromModel(user);
         },

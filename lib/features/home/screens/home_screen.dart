@@ -1,8 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+
 import 'package:nukdi4/features/home/screens/category_products_screen.dart';
+import 'package:nukdi4/features/home/screens/predict_screen.dart'; // ✅ Import PredictScreen
 import 'package:nukdi4/features/home/services/category_services.dart';
 import 'package:nukdi4/features/home/services/home_services.dart';
 import 'package:nukdi4/features/search/screens/filterscreen.dart';
@@ -22,8 +23,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final CategoryService categoryService = CategoryService();
   final HomeServices homeServices = HomeServices();
-
-  final ImagePicker picker = ImagePicker();
 
   List<Category> categories = [];
   List<Product> searchResults = [];
@@ -232,85 +231,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            backgroundColor: Colors.white,
-            builder: (context) {
-              return Stack(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'Part Identification',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        buildUploadButton(),
-                        const SizedBox(height: 10),
-                        buildUploadButton(),
-                        const SizedBox(height: 10),
-                        buildUploadButton(),
-                        const SizedBox(height: 20),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text('Car Name: Toyota'),
-                        ),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text('Year: 2005'),
-                        ),
-                        const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text('Car Part: ClockSpring'),
-                        ),
-                        const SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: GestureDetector(
-                            onTap: () {
-                              // Handle suppliers link click
-                            },
-                            child: const Text(
-                              'Suppliers',
-                              style: TextStyle(
-                                color: Colors.blue,
-                                decoration: TextDecoration.underline,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    right: 10,
-                    child: FloatingActionButton(
-                      mini: true,
-                      backgroundColor: Colors.black,
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Icon(
-                        Icons.close,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const PredictScreen()),
           );
         },
         backgroundColor: Colors.black,
@@ -368,32 +291,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildUploadButton() {
-    return ElevatedButton.icon(
-      onPressed: () async {
-        final XFile? image = await picker.pickImage(
-          source: ImageSource.gallery,
-        );
-
-        if (image != null) {
-          print('Selected image path: ${image.path}');
-          // You can add upload or preview logic here
-        } else {
-          print('No image selected.');
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        minimumSize: const Size(double.infinity, 50),
-        backgroundColor: Colors.grey.shade200,
-        foregroundColor: Colors.black,
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      icon: const Icon(Icons.upload),
-      label: const Text('Upload'),
     );
   }
 }
