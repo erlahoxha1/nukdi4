@@ -1,4 +1,3 @@
-import 'package:badges/badges.dart' as badges;
 import 'package:flutter/material.dart';
 import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/features/admin/screens/posts_screen.dart';
@@ -15,13 +14,16 @@ class AdminScreen extends StatefulWidget {
 
 class _AdminScreenState extends State<AdminScreen> {
   int _page = 0;
-  double bottomBarWidth = 42;
-  double bottomBarBorderWidth = 5;
 
   List<Widget> pages = [
     const PostsScreen(),
-    const Center(child: Text('Analytics Page')),
-    const Center(child: Text('Cart Page')),
+    const AnalyticsScreen(),
+    const Center(
+      child: Text(
+        'Cart Page',
+        style: TextStyle(color: Colors.white),
+      ),
+    ),
   ];
 
   void updatePage(int page) {
@@ -30,94 +32,72 @@ class _AdminScreenState extends State<AdminScreen> {
     });
   }
 
-  Widget buildNavIcon(IconData icon, int index) {
-    return Container(
-      width: bottomBarWidth,
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color:
-                _page == index
-                    ? GlobalVariables.selectedNavBarColor
-                    : GlobalVariables.backgroundColor,
-            width: bottomBarBorderWidth,
-          ),
-        ),
-      ),
-      child: Icon(icon),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(50),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: GlobalVariables.appBarGradient,
-            ),
+      backgroundColor: const Color(0xFF1C1C1E), // dark grey background
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 104, 9, 9), // dark red
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'Admin Panel',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                alignment: Alignment.topLeft,
-                child: Image.asset(
-                  'assets/images/applogo.png',
-                  width: 50,
-                  height: 100,
-                  color: Colors.black,
-                ),
-              ),
-              const Text(
-                'Admin Panel',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              PopupMenuButton<String>(
-                onSelected: (value) {
-                  if (value == 'manage_categories') {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ManageCategoriesScreen(),
-                      ),
-                    );
-                  }
-                },
-                itemBuilder:
-                    (context) => [
-                      const PopupMenuItem(
-                        value: 'manage_categories',
-                        child: Text('Manage Categories'),
-                      ),
-                    ],
+        ),
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Image.asset(
+            'assets/images/applogo.png',
+            width: 40,
+            height: 40,
+          ),
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'manage_categories') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ManageCategoriesScreen(),
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            color: Colors.white,
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'manage_categories',
+                child: Text('Manage Categories'),
               ),
             ],
           ),
-        ),
+        ],
       ),
       body: pages[_page],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _page,
-        selectedItemColor: GlobalVariables.selectedNavBarColor,
-        unselectedItemColor: GlobalVariables.unselectedNavBarColor,
-        backgroundColor: GlobalVariables.backgroundColor,
-        iconSize: 28,
         onTap: updatePage,
-        items: [
+        backgroundColor: const Color.fromARGB(255, 104, 9, 9),
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        type: BottomNavigationBarType.fixed,
+        items: const [
           BottomNavigationBarItem(
-            icon: buildNavIcon(Icons.home_outlined, 0),
-            label: '',
+            icon: Icon(Icons.home_outlined),
+            label: 'Posts',
           ),
           BottomNavigationBarItem(
-            icon: buildNavIcon(Icons.analytics_outlined, 1),
-            label: '',
+            icon: Icon(Icons.analytics_outlined),
+            label: 'Analytics',
           ),
           BottomNavigationBarItem(
-            icon: buildNavIcon(Icons.all_inbox_outlined, 2),
-            label: '',
+            icon: Icon(Icons.all_inbox_outlined),
+            label: 'Orders',
           ),
         ],
       ),
