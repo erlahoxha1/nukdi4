@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:nukdi4/features/home/screens/category_products_screen.dart';
-import 'package:nukdi4/features/home/screens/predict_screen.dart'; // ✅ Import PredictScreen
+import 'package:nukdi4/features/home/screens/yolo_video.dart'; // ✅ Import YoloVideo screen
 import 'package:nukdi4/features/home/services/category_services.dart';
 import 'package:nukdi4/features/home/services/home_services.dart';
 import 'package:nukdi4/features/search/screens/filterscreen.dart';
@@ -233,7 +233,9 @@ class _HomeScreenState extends State<HomeScreen> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (_) => const PredictScreen()),
+            MaterialPageRoute(
+              builder: (_) => const YoloVideo(),
+            ), // ✅ Opens live camera detection
           );
         },
         backgroundColor: Colors.black,

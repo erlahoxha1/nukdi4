@@ -1,0 +1,40 @@
+air compressor
+alternator
+battery
+brake caliper
+brake pad
+brake rotor
+camshaft
+carberator
+coil spring
+crankshaft
+cylinder head
+distributor
+engine block
+fuel injector
+fuse box
+gas cap
+headlights
+idler arm
+ignition coil
+leaf spring
+lower control arm
+muffler
+oil filter
+oil pan
+overflow tank
+oxygen sensor
+piston
+radiator
+radiator fan
+radiator hose
+rim
+spark plug
+starter
+taillights
+thermostat
+torque converter
+transmission
+vacuum brake booster
+valve lifter
+water pump
