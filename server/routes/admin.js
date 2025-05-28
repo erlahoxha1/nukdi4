@@ -146,19 +146,13 @@ adminRouter.get("/admin/analytics", admin, async (req, res) => {
       },
     ]);
 
-    const earningsMap = {};
     for (let e of earnings) {
-      earningsMap[e._id] = e.totalSales;
       totalEarnings += e.totalSales;
     }
 
     res.json({
       totalEarnings,
-      mobileEarnings: earningsMap["Mobiles"] || 0,
-      essentialEarnings: earningsMap["Essentials"] || 0,
-      booksEarnings: earningsMap["Books"] || 0,
-      applianceEarnings: earningsMap["Appliances"] || 0,
-      fashionEarnings: earningsMap["Fashion"] || 0,
+      sales: earnings.map((e) => ({ label: e._id, earning: e.totalSales })),
     });
   } catch (e) {
     res.status(500).json({ error: e.message });
