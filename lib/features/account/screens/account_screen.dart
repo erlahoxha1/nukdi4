@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nukdi4/features/auth/screens/auth_screen.dart';
 import 'package:nukdi4/features/account/screens/add_address_screen.dart';
+import 'package:nukdi4/features/account/screens/wishlist_screen.dart';
 
 
 class AccountScreen extends StatelessWidget {
@@ -78,6 +79,15 @@ class AccountScreen extends StatelessWidget {
                       );
                     },
                   ),
+                  _buildProfileTile(
+                      context,
+                      icon: Icons.favorite_border,
+                      label: 'My Wishlist',
+                      onTap: () {
+                        Navigator.pushNamed(context, '/wishlist');
+                      },
+                    ),
+
                   const SizedBox(height: 12),
                   _buildProfileTile(
                     context,

@@ -13,6 +13,8 @@ import 'package:nukdi4/features/search/screens/search_screen.dart';
 import 'package:nukdi4/features/cart/screens/cart_screen.dart'; // ✅ NEW
 import 'package:nukdi4/models/order.dart';
 import 'package:nukdi4/models/product.dart';
+import 'package:nukdi4/features/account/screens/wishlist_screen.dart';
+
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {
   switch (routeSettings.name) {
@@ -73,6 +75,13 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => const OrderDetailScreen(), // 👈 no parameter
       );
+
+    case '/wishlist':
+  return MaterialPageRoute(
+    settings: routeSettings,
+    builder: (_) => const WishlistScreen(),
+  );
+  
 
     case '/add-address':
       return MaterialPageRoute(

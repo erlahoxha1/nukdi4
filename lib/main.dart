@@ -10,11 +10,17 @@ import 'package:nukdi4/common/widgets/bottom_bar.dart';
 import 'package:nukdi4/common/widgets/onboarding_screen.dart';
 import 'package:nukdi4/provider/user_provider.dart';
 import 'package:nukdi4/router.dart';
+import 'package:nukdi4/provider/wishlist_provider.dart';
 
 void main() {
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (context) => UserProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(
+          create: (context) => WishlistProvider(),
+        ), // ✅ add this
+      ],
       child: const MyApp(),
     ),
   );

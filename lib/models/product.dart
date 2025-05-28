@@ -12,7 +12,7 @@ class Product {
   final String carBrand;
   final String carModel;
   final String carYear;
-  final String? id;
+  final String id;
   final List<Rating>? rating;
 
   Product({
@@ -26,7 +26,8 @@ class Product {
     required this.carBrand,
     required this.carModel,
     required this.carYear,
-    this.id,
+    required this.id,
+
     this.rating,
   });
 
@@ -59,7 +60,8 @@ class Product {
       carBrand: map['carBrand'] ?? '',
       carModel: map['carModel'] ?? '',
       carYear: map['carYear'] ?? '',
-      id: map['_id'],
+      id: map['_id'] ?? '',
+
       rating:
           map['ratings'] != null
               ? List<Rating>.from(map['ratings']?.map((x) => Rating.fromMap(x)))

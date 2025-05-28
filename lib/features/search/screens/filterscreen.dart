@@ -32,7 +32,7 @@ class _FilterScreenState extends State<FilterScreen> {
     final token = userProvider.user.token;
 
     final uri = Uri.parse(
-      'http://192.168.100.60:3000/api/products/filter'
+      'http://172.20.10.2:3000/api/products/filter'
       '?brand=$selectedBrand&model=$selectedModel&year=$selectedYear',
     );
 

@@ -3,21 +3,21 @@ import 'package:nukdi4/constants/global_variables.dart';
 import 'package:nukdi4/features/product_details/services/product_details_services.dart';
 import 'package:nukdi4/models/product.dart';
 import 'package:nukdi4/constants/utils.dart';
+import 'package:nukdi4/provider/wishlist_provider.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailScreen extends StatefulWidget {
   static const String routeName = '/product-details';
   final Product product;
 
-  const ProductDetailScreen({Key? key, required this.product})
-    : super(key: key);
+  const ProductDetailScreen({Key? key, required this.product}) : super(key: key);
 
   @override
   State<ProductDetailScreen> createState() => _ProductDetailScreenState();
 }
 
 class _ProductDetailScreenState extends State<ProductDetailScreen> {
-  final ProductDetailsServices productDetailsServices =
-      ProductDetailsServices();
+  final ProductDetailsServices productDetailsServices = ProductDetailsServices();
   int userQuantity = 1;
 
   void addToCart() {
@@ -40,10 +40,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
         builder: (context) {
           return AlertDialog(
             backgroundColor: const Color(0xFF1C1C1E),
-            title: const Text(
-              'Added to Cart',
-              style: TextStyle(color: Colors.white),
-            ),
+            title: const Text('Added to Cart', style: TextStyle(color: Colors.white)),
             content: const Text(
               'Do you want to go to your cart or continue shopping?',
               style: TextStyle(color: Colors.white70),
@@ -53,36 +50,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text(
-                  'Continue Shopping',
-                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
-                ),
+                child: const Text('Continue Shopping', style: TextStyle(color: Colors.white)),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pushNamed(context, '/cart');
                 },
-                child: const Text(
-                  'Go to Cart',
-                  style: TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
-                ),
+                child: const Text('Go to Cart', style: TextStyle(color: Colors.white)),
               ),
             ],
           );
         },
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Cannot add more than stock available')),
-      );
+      showSnackBar(context, 'Cannot add more than stock available');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final wishlistProvider = Provider.of<WishlistProvider>(context);
+    final isInWishlist = wishlistProvider.isInWishlist(widget.product.id);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1C1C1E), // dark background
+      backgroundColor: const Color(0xFF1C1C1E),
       body: SafeArea(
         child: Column(
           children: [
@@ -94,7 +86,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                     onTap: () => Navigator.pop(context),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 104, 9, 9),
+                        color: const Color(0xFF680909),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       padding: const EdgeInsets.all(8),
@@ -115,7 +107,19 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       ),
                     ),
                   ),
-                  const Icon(Icons.favorite_border, color: Colors.white),
+                  IconButton(
+                    icon: Icon(
+                      isInWishlist ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      if (isInWishlist) {
+                        wishlistProvider.removeFromWishlist(widget.product.id);
+                      } else {
+                        wishlistProvider.addToWishlist(widget.product);
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -137,7 +141,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF680909), // deep red box
+                          color: const Color(0xFF680909),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Column(
@@ -178,10 +182,7 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                   child: Row(
                                     children: [
                                       IconButton(
-                                        icon: const Icon(
-                                          Icons.remove,
-                                          color: Colors.white,
-                                        ),
+                                        icon: const Icon(Icons.remove, color: Colors.white),
                                         onPressed: () {
                                           if (userQuantity > 1) {
                                             setState(() => userQuantity--);
@@ -190,30 +191,15 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                       ),
                                       Text(
                                         '$userQuantity',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white,
-                                        ),
+                                        style: const TextStyle(fontSize: 16, color: Colors.white),
                                       ),
                                       IconButton(
-                                        icon: const Icon(
-                                          Icons.add,
-                                          color: Colors.white,
-                                        ),
+                                        icon: const Icon(Icons.add, color: Colors.white),
                                         onPressed: () {
-                                          if (userQuantity <
-                                              widget.product.quantity) {
+                                          if (userQuantity < widget.product.quantity) {
                                             setState(() => userQuantity++);
                                           } else {
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              const SnackBar(
-                                                content: Text(
-                                                  'No stock available',
-                                                ),
-                                              ),
-                                            );
+                                            showSnackBar(context, 'No stock available');
                                           }
                                         },
                                       ),
@@ -244,27 +230,16 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                 const Spacer(),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color.fromARGB(
-                                      255,
-                                      104,
-                                      9,
-                                      9,
-                                    ),
+                                    backgroundColor: const Color(0xFF680909),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20),
                                     ),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 24,
-                                      vertical: 12,
-                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                   ),
                                   onPressed: addToCart,
                                   child: const Text(
                                     'Add to Cart',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
+                                    style: TextStyle(fontSize: 16, color: Colors.white),
                                   ),
                                 ),
                               ],

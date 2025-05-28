@@ -139,20 +139,21 @@ adminRouter.get("/admin/analytics", admin, async (req, res) => {
           _id: "$products.product.categoryName",
           totalSales: {
             $sum: {
-              $multiply: ["$products.quantity", "$products.product.price"],
-            },
-          },
-        },
-      },
+              $multiply: ["$products.quantity", "$products.product.price"]
+            }
+          }
+        }
+      }
     ]);
 
-    for (let e of earnings) {
-      totalEarnings += e.totalSales;
-    }
+    earnings.forEach((e) => totalEarnings += e.totalSales);
 
     res.json({
       totalEarnings,
-      sales: earnings.map((e) => ({ label: e._id, earning: e.totalSales })),
+      sales: earnings.map(e => ({
+        label: e._id || "Unknown",
+        earning: e.totalSales
+      }))
     });
   } catch (e) {
     res.status(500).json({ error: e.message });

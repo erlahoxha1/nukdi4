@@ -34,7 +34,7 @@ class _PaypalPaymentScreenState extends State<PaypalPaymentScreen> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.100.60:3000/api/save-order'),
+        Uri.parse('http://172.20.10.2:3000/api/save-order'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
