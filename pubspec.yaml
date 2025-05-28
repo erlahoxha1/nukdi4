@@ -44,7 +44,7 @@ dependencies:
   cloudinary_public: ^0.23.1
   flutter_rating_bar: ^4.0.1
   intl: ^0.19.0
-  pay: ^1.1.0
+  pay_android: ^3.1.1
   fl_chart: ^1.0.0
   webview_flutter: ^4.13.0
   url_launcher: ^6.1.14

@@ -17,7 +17,7 @@ class _PayPalPaymentScreenState extends State<PayPalPaymentScreen> {
     });
 
     final response = await http.post(
-      Uri.parse('http://192.168.1.49:3000/api/create-paypal-order'),
+      Uri.parse('http://172.20.10.2:3000/api/create-paypal-order'),
       headers: {'Content-Type': 'application/json'},
     );
 
